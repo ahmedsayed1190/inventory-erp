@@ -1,0 +1,333 @@
+/* ================= PAGE SETUP ================= */
+
+@page {
+  size: A4;
+  margin: 12mm;
+}
+
+/* ================= SCREEN BACKGROUND ================= */
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #d6d6d6;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ================= WRAPPER (CENTER PAGE) ================= */
+
+.print-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 60px 0;
+  transform-origin: top center;
+  transition: 0.2s ease;
+}
+
+/* ================= A4 PAGE STYLE ================= */
+
+.print-page {
+  width: 794px;        /* A4 width px */
+  height: 1123px;      /* A4 height px */
+
+  background: #ffffff;
+
+  padding: 40px 35px;  /* حواف داخلية */
+  box-sizing: border-box;
+
+  border-radius: 8px;  
+  border: 1px solid #e5e5e5;
+
+  box-shadow:
+    0 25px 60px rgba(0,0,0,0.25),
+    0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* ================= ZOOM BUTTONS ================= */
+
+.zoom-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 6px;
+  z-index: 9999;
+}
+
+.zoom-controls button {
+  padding: 6px 12px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.zoom-controls button:hover {
+  opacity: 0.85;
+}
+
+/* ================= HEADER ================= */
+
+.header-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+
+.logo-box {
+  width: 25%;
+  vertical-align: middle;
+}
+
+.logo-img {
+  height: 110px;
+}
+
+.title-box {
+  width: 22%;
+  border: 3px solid #000;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.title-ar {
+  background: #f4a300;
+  font-weight: 800;
+  font-size: 20px;   /* 👈 أكبر */
+  padding: 8px;
+}
+
+.title-en {
+  background: #000;
+  color: #fff;
+  font-size: 16px;   /* 👈 أكبر */
+  font-weight: 600;
+  padding: 8px;
+}
+.company-box {
+  width: 25%;
+  text-align: right;
+  font-size: 16px;     /* 👈 أكبر */
+  font-weight: 700;    /* 👈 أوضح */
+  line-height: 1.7;
+}
+
+.company-name {
+  font-weight: 800;
+  font-size: 18px;   /* 👈 أكبر بوضوح */
+}
+/* ================= INFO TABLE ================= */
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+  table-layout: fixed;
+  border: 2px solid #000;
+}
+
+.info-table th,
+.info-table td {
+  border: 1px solid #000;
+  vertical-align: middle;
+}
+
+.info-table th {
+  width: 15%;
+  padding: 4px;
+  font-size: 15px;      /* 👈 أكبر */
+  font-weight: 700;     /* 👈 تقيل */
+  text-align: center;
+  white-space: nowrap;
+}
+
+.info-table td {
+  width: 35%;
+  padding: 6px 10px;
+  font-size: 16px;     /* 👈 كبرنا الخط */
+  font-weight: 700;    /* 👈 تقيل شوية */
+  background: #fff;
+  text-align: left;
+  word-break: break-word;
+}
+/* ================= ITEMS TABLE ================= */
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: 2px solid #000;
+}
+
+.items-table th,
+.items-table td {
+  border: 1px solid #000;
+  padding: 4px;
+  text-align: center;
+}
+
+.items-table th {
+  background: #f4a300;
+}
+
+.items-table .desc {
+  text-align: left;
+}
+
+.items-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* Column widths */
+
+.items-table th:nth-child(1),
+.items-table td:nth-child(1) { width: 5%; }
+
+.items-table th:nth-child(2),
+.items-table td:nth-child(2) { width: 12%; }
+
+.items-table th:nth-child(3),
+.items-table td:nth-child(3) { width: 30%; }
+
+.items-table th:nth-child(4),
+.items-table td:nth-child(4) { width: 8%; }
+
+.items-table th:nth-child(5),
+.items-table td:nth-child(5) { width: 8%; }
+
+.items-table th:nth-child(6),
+.items-table td:nth-child(6) { width: 12%; text-align: right; }
+
+.items-table th:nth-child(7),
+.items-table td:nth-child(7) { width: 15%; text-align: right; }
+
+/* ================= TOTALS ================= */
+
+.totals-table {
+  width: 40%;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-top: 10px;
+  border: 2px solid #000;
+}
+
+.totals-table th,
+.totals-table td {
+  border: 1px solid #000;
+  padding: 4px;
+}
+
+.totals-table td {
+  text-align: right;
+}
+
+.totals-table .grand th,
+.totals-table .grand td {
+  background: #f4a300;
+  font-weight: bold;
+}
+
+/* ================= PRINT MODE ================= */
+
+@media print {
+
+  body {
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .print-page,
+  .print-page * {
+    visibility: visible;
+  }
+
+  .print-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 210mm;
+    height: auto;
+    margin: 0;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    transform: scale(1) !important;
+  }
+
+  .zoom-controls {
+    display: none !important;
+  }
+}
+/* ================= FONT BOLDER ================= */
+
+.print-page {
+  font-weight: 700;   /* يخلي الكتابة أتقل */
+  color: #000;
+}
+
+/* تكبير شوية عناوين الجدول */
+.items-table th,
+.info-table th,
+.totals-table th {
+  font-weight: 700;
+}
+
+/* ================= CENTER DESCRIPTION ================= */
+
+/* لو انت مستخدم class desc */
+.items-table .desc {
+  text-align: center !important;
+}
+
+/* احتياطي لو مش شغال */
+.items-table td:nth-child(3) {
+  text-align: center;
+}
+.print-page {
+  page-break-after: always;
+}
+
+.print-page:last-child {
+  page-break-after: auto;
+}
+/* ================= LONG INVOICE ================= */
+
+.long-invoice .items-table th,
+.long-invoice .items-table td {
+  font-size: 11px;
+  padding: 3px;
+}
+
+/* ================= PAGE CONTROLS ================= */
+
+.page-controls {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 9999;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.page-controls button {
+  padding: 6px 12px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.page-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

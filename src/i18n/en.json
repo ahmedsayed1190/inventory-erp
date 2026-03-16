@@ -1,0 +1,132 @@
+{
+  "invoice": {
+    "title": "Sales Invoice",
+    "date": "Invoice Date",
+    "time": "Time",
+    "new": "New Invoice",
+    "save": "Save Invoice",
+    "delete": "Delete Invoice",
+    "confirmDelete": "Are you sure you want to delete this invoice?",
+    "customerName": "Customer Name",
+    "customerBalance": "Customer Balance",
+    "paymentMethod": "Payment Method",
+    "warehouse": "Warehouse",
+    "selectWarehouse": "Select Warehouse",
+    "itemName": "Item Name",
+    "itemCode": "Item Code",
+    "item": "Item",
+    "qty": "Quantity",
+    "price": "Price",
+    "total": "Total",
+    "add": "Add",
+    "deleteItem": "Delete Item",
+    "discount": "Discount",
+    "paid": "Paid",
+    "remaining": "Remaining",
+    "subTotal": "Subtotal",
+    "netTotal": "Net Total",
+    "completeData": "Please complete invoice data",
+    "selectWarehouseFirst": "Select warehouse first",
+    "qtyExceeded": "Quantity exceeds available stock",
+    "chequeAmount": "Cheque Amount",
+    "chequeDate": "Cheque Date"
+  },
+
+  "payment": {
+    "cash": "Cash",
+    "credit": "Credit",
+    "cheque": "Cheque"
+  },
+
+  "nav": {
+    "first": "First",
+    "prev": "Previous",
+    "next": "Next",
+    "last": "Last"
+  },
+
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "definitions": "Definitions",
+    "sales": "Sales",
+    "purchases": "Purchases",
+    "expenses": "Expenses",
+    "cash": "Cash",
+    "reports": "Reports",
+    "lists": "Lists",
+    "settings": "Settings"
+  },
+
+  "sidebarLinks": {
+    "items": "Items",
+    "warehouses": "Warehouses",
+    "customers": "Customers",
+    "suppliers": "Suppliers",
+    "expensesDef": "Expenses Definitions",
+    "revenuesDef": "Revenue Definitions",
+    "cashAccounts": "Cash & Banks",
+
+    "purchaseInvoice": "Purchase Invoice",
+    "purchaseReturn": "Purchase Return",
+    "supplierLedger": "Supplier Ledger",
+    "supplierTotalBalances": "Suppliers Total Balance",
+
+    "salesInvoice": "Sales Invoice",
+    "salesReturn": "Sales Return",
+    "customerPayments": "Customer Payments",
+    "customerLedger": "Customer Ledger",
+    "customerTotal": "Total Customers Ledger",
+
+    "addExpense": "Add Expense",
+    "expensesList": "Expenses List",
+
+    "cashTransaction": "Cash Transaction",
+    "cashList": "Cash List",
+
+    "stockTransfer": "Stock Transfer",
+
+    "itemMovement": "Item Movement Report",
+    "stockReport": "Stock Report",
+    "profitReport": "Profit Report",
+
+    "itemsList": "Items List",
+    "suppliersList": "Suppliers List",
+    "customersList": "Customers List",
+    "revenuesList": "Revenues List",
+
+    "companySettings": "Company Settings",
+    "usersSettings": "Users Permissions",
+    "systemSettings": "Reset System"
+  },
+
+  "definitions": {
+    "items": {
+      "title": "Items",
+      "code": "Code",
+      "name": "Name",
+      "unit": "Unit",
+      "cost": "Cost Price",
+      "price": "Sale Price",
+      "save": "Save",
+      "list": "Items List"
+    },
+    "warehouses": {
+      "title": "Warehouses",
+      "name": "Warehouse Name",
+      "add": "Add Warehouse"
+    },
+    "customers": {
+      "title": "Customers",
+      "number": "Customer Number",
+      "name": "Customer Name",
+      "openingBalance": "Opening Balance",
+      "phone": "Phone",
+      "address": "Address",
+      "save": "Save",
+      "delete": "Delete",
+      "list": "Customers List",
+      "enterName": "Enter customer name",
+      "confirmDelete": "Are you sure you want to delete this customer?"
+    }
+  }
+}

@@ -1,0 +1,117 @@
+/* ===== SIDEBAR ===== */
+
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #1e293b;
+  color: #fff;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 15px;
+  overflow-y: auto;
+  transition: width 0.3s ease;
+}
+
+/* عند تصغير السايدبار */
+.sidebar.collapsed {
+  width: 70px;
+}
+
+/* ===== HEADER ===== */
+
+.sidebar-header {
+  border-bottom: 1px solid #334155;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.sidebar-header small {
+  color: #cbd5e1;
+}
+
+/* عند collapse اخفاء النص */
+
+.sidebar.collapsed .sidebar-header h3 {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-header small {
+  display: none;
+}
+
+/* ===== MENU ===== */
+
+.menu-section {
+  margin-bottom: 15px;
+}
+
+.menu-section h4 {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+/* روابط القائمة */
+
+.menu-section a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #e5e7eb;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.menu-section a:hover {
+  background: #334155;
+}
+
+/* عند collapse اخفاء النص */
+
+.sidebar.collapsed .menu-section a span {
+  display: none;
+}
+
+/* ===== LOGOUT BUTTON ===== */
+
+.logout-btn {
+  width: 100%;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* ===== SCROLLBAR ===== */
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+/* ===== ANIMATION ===== */
+
+.sidebar,
+.main-content {
+  transition: all 0.3s ease;
+}

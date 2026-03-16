@@ -1,0 +1,132 @@
+{
+  "invoice": {
+    "title": "فاتورة بيع",
+    "date": "تاريخ الفاتورة",
+    "time": "الوقت",
+    "new": "فاتورة جديدة",
+    "save": "حفظ الفاتورة",
+    "delete": "حذف الفاتورة",
+    "confirmDelete": "هل أنت متأكد من حذف الفاتورة؟",
+    "customerName": "اسم العميل",
+    "customerBalance": "رصيد العميل",
+    "paymentMethod": "طريقة الدفع",
+    "warehouse": "المخزن",
+    "selectWarehouse": "اختر المخزن",
+    "itemName": "اسم الصنف",
+    "itemCode": "كود الصنف",
+    "item": "الصنف",
+    "qty": "الكمية",
+    "price": "السعر",
+    "total": "الإجمالي",
+    "add": "إضافة",
+    "deleteItem": "حذف الصنف",
+    "discount": "الخصم",
+    "paid": "المدفوع",
+    "remaining": "المتبقي",
+    "subTotal": "الإجمالي قبل الخصم",
+    "netTotal": "الإجمالي بعد الخصم",
+    "completeData": "كمّل بيانات الفاتورة",
+    "selectWarehouseFirst": "اختار المخزن الأول",
+    "qtyExceeded": "الكمية أكبر من المتاح",
+    "chequeAmount": "قيمة الشيك",
+    "chequeDate": "تاريخ الشيك"
+  },
+
+  "payment": {
+    "cash": "نقدي",
+    "credit": "آجل",
+    "cheque": "شيك"
+  },
+
+  "nav": {
+    "first": "أول",
+    "prev": "السابق",
+    "next": "التالي",
+    "last": "آخر"
+  },
+
+  "sidebar": {
+    "dashboard": "لوحة التحكم",
+    "definitions": "التعريفات",
+    "sales": "المبيعات",
+    "purchases": "المشتريات",
+    "expenses": "المصروفات",
+    "cash": "الخزنة",
+    "reports": "التقارير",
+    "lists": "الكشوفات",
+    "settings": "الإعدادات"
+  },
+
+  "sidebarLinks": {
+    "items": "تعريف الأصناف",
+    "warehouses": "تعريف المخازن",
+    "customers": "تعريف العملاء",
+    "suppliers": "تعريف الموردين",
+    "expensesDef": "تعريف المصروفات",
+    "revenuesDef": "تعريف الإيرادات",
+    "cashAccounts": "تعريف الخزينة والبنوك",
+
+    "purchaseInvoice": "فاتورة المشتريات",
+    "purchaseReturn": "مرتجع المشتريات",
+    "supplierLedger": "كشف حساب المورد",
+"supplierTotalBalances": "كشف حساب إجمالي الموردين",
+
+    "salesInvoice": "فاتورة المبيعات",
+    "salesReturn": "مرتجع المبيعات",
+    "customerPayments": "تحصيل العملاء",
+    "customerLedger": "كشف حساب العميل",
+    "customerTotal": "كشف حساب إجمالي العملاء",
+
+    "addExpense": "إضافة مصروف",
+    "expensesList": "كشف المصروفات",
+
+    "cashTransaction": "حركة خزينة",
+    "cashList": "كشف الخزينة",
+
+    "stockTransfer": "تحويل بين المخازن",
+
+    "itemMovement": "تقرير حركة الصنف",
+    "stockReport": "تقرير كميات الأصناف",
+    "profitReport": "تقرير الأرباح",
+
+    "itemsList": "كشف الأصناف",
+    "suppliersList": "كشف الموردين",
+    "customersList": "كشف العملاء",
+    "revenuesList": "كشف الإيرادات",
+
+    "companySettings": "بيانات الشركة",
+    "usersSettings": "صلاحيات المستخدمين",
+    "systemSettings": "تفريغ البرنامج"
+  },
+
+  "definitions": {
+    "items": {
+      "title": "تعريف الأصناف",
+      "code": "الكود",
+      "name": "الاسم",
+      "unit": "الوحدة",
+      "cost": "سعر التكلفة",
+      "price": "سعر البيع",
+      "save": "حفظ",
+      "list": "قائمة الأصناف"
+    },
+    "warehouses": {
+      "title": "تعريف المخازن",
+      "name": "اسم المخزن",
+      "add": "إضافة مخزن"
+    },
+    "customers": {
+      "title": "تعريف العملاء",
+      "number": "رقم العميل",
+      "name": "اسم العميل",
+      "openingBalance": "الرصيد الافتتاحي",
+      "phone": "رقم الموبايل",
+      "address": "العنوان",
+      "save": "حفظ",
+      "delete": "حذف",
+      "list": "قائمة العملاء",
+      "enterName": "أدخل اسم العميل",
+      "confirmDelete": "هل أنت متأكد من حذف العميل؟"
+    }
+  }
+}
