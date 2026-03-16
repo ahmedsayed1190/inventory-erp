@@ -68,7 +68,7 @@ import GlobalSearchPage from "./modules/globalSearch/GlobalSearchPage";
 /* ======================= */
 
 function MainLayout() {
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth > 768);
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
