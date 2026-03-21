@@ -1,7 +1,18 @@
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-
+import {
+  LayoutDashboard,
+  Package,
+  Users,
+  Truck,
+  ShoppingCart,
+  DollarSign,
+  BarChart3,
+  Settings,
+  Repeat,
+  Wallet
+} from "lucide-react";
 function Sidebar() {
   const { t } = useTranslation();
 const [openSection, setOpenSection] = useState(null);
@@ -11,17 +22,20 @@ const sidebarWidth = collapsed ? 80 : 270;
     setOpenSection(openSection === section ? null : section);
   };
 
-  const linkStyle = ({ isActive }) => ({
-    display: "block",
-    padding: "10px 16px",
-    textDecoration: "none",
-    color: isActive ? "#22d3ee" : "#cbd5e1",
-    background: isActive ? "rgba(34,211,238,0.12)" : "transparent",
-    borderRadius: 8,
-    marginBottom: 4,
-    fontSize: 13,
-    transition: "all 0.2s ease"
-  });
+const linkStyle = ({ isActive }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+  padding: "10px 14px",
+  textDecoration: "none",
+  color: isActive ? "#f97316" : "#cbd5e1",
+  background: isActive ? "rgba(249,115,22,0.15)" : "transparent",
+  borderRadius: 10,
+  marginBottom: 4,
+  fontSize: 13,
+  transition: "all 0.25s ease",
+  transform: isActive ? "translateX(5px)" : "translateX(0)"
+});
 
   const sectionTitle = {
     marginTop: 20,
@@ -47,7 +61,9 @@ const sidebarWidth = collapsed ? 80 : 270;
     <div
   style={{
     width: sidebarWidth,
-    background: "linear-gradient(180deg,#0f172a,#1e293b)",
+    background: "linear-gradient(180deg,#020617,#0f172a)",
+backdropFilter: "blur(12px)",
+borderRight: "1px solid rgba(255,255,255,0.05)",
     color: "#e2e8f0",
     padding: 18,
     height: "100vh",
@@ -73,20 +89,36 @@ cursor: "pointer"
 </div>
       {/* ================= Dashboard ================= */}
 <NavLink to="/dashboard" style={linkStyle}>
-📊 {!collapsed && t("sidebar.dashboard")}</NavLink>
+<LayoutDashboard size={18} />
+{!collapsed && t("sidebar.dashboard")}</NavLink>
 
       {/* ================= التعريفات ================= */}
       <div style={sectionTitle} onClick={() => toggleSection("definitions")}>
-        <span>📦 {t("sidebar.definitions")}</span>
+        <span style={{display:"flex",alignItems:"center",gap:8}}>
+  <Package size={16}/>
+  {!collapsed && t("sidebar.definitions")}
+</span>
         <span style={arrowStyle("definitions")}>▸</span>
       </div>
 
       {openSection === "definitions" && (
         <>
-          <NavLink to="/items" style={linkStyle}>🧾 {t("sidebarLinks.items")}</NavLink>
-          <NavLink to="/warehouses" style={linkStyle}>🏬 {t("sidebarLinks.warehouses")}</NavLink>
-          <NavLink to="/customers" style={linkStyle}>👥 {t("sidebarLinks.customers")}</NavLink>
-          <NavLink to="/suppliers" style={linkStyle}>🚚 {t("sidebarLinks.suppliers")}</NavLink>
+          <NavLink to="/items" style={linkStyle}>
+  <Package size={16}/>
+  {!collapsed && t("sidebarLinks.items")}
+</NavLink>
+          <NavLink to="/warehouses" style={linkStyle}>
+  <Package size={16}/>
+  {!collapsed && t("sidebarLinks.warehouses")}
+</NavLink>
+          <NavLink to="/customers" style={linkStyle}>
+  <Users size={16}/>
+  {!collapsed && t("sidebarLinks.customers")}
+</NavLink>
+          <NavLink to="/suppliers" style={linkStyle}>
+  <Truck size={16}/>
+  {!collapsed && t("sidebarLinks.suppliers")}
+</NavLink>
           <NavLink to="/expenses" style={linkStyle}>💸 {t("sidebarLinks.expensesDef")}</NavLink>
           <NavLink to="/revenues" style={linkStyle}>💰 {t("sidebarLinks.revenuesDef")}</NavLink>
           <NavLink to="/cash-accounts" style={linkStyle}>🏦 {t("sidebarLinks.cashAccounts")}</NavLink>
@@ -121,7 +153,10 @@ cursor: "pointer"
 
       {/* ================= المبيعات ================= */}
       <div style={sectionTitle} onClick={() => toggleSection("sales")}>
-        <span>💵 {t("sidebar.sales")}</span>
+        <span style={{display:"flex",alignItems:"center",gap:8}}>
+  <DollarSign size={16}/>
+  {!collapsed && t("sidebar.sales")}
+</span>
         <span style={arrowStyle("sales")}>▸</span>
       </div>
 
@@ -181,7 +216,10 @@ cursor: "pointer"
 
       {/* ================= التقارير ================= */}
       <div style={sectionTitle} onClick={() => toggleSection("reports")}>
-        <span>📊 {t("sidebar.reports")}</span>
+        <span style={{display:"flex",alignItems:"center",gap:8}}>
+  <BarChart3 size={16}/>
+  {!collapsed && t("sidebar.reports")}
+</span>
         <span style={arrowStyle("reports")}>▸</span>
       </div>
 
@@ -233,7 +271,10 @@ cursor: "pointer"
 
       {/* ================= الإعدادات ================= */}
       <div style={sectionTitle} onClick={() => toggleSection("settings")}>
-        <span>⚙️ {t("sidebar.settings")}</span>
+        <span style={{display:"flex",alignItems:"center",gap:8}}>
+  <Settings size={16}/>
+  {!collapsed && t("sidebar.settings")}
+</span>
         <span style={arrowStyle("settings")}>▸</span>
       </div>
 

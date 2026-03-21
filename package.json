@@ -14,6 +14,7 @@
     "i18next": "^25.8.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.29",
+    "lucide-react": "^0.577.0",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "18.2.0",
@@ -27,11 +28,11 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "NODE_OPTIONS=--max_old_space_size=4096 CI=false react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject"
-},
+    "start": "react-scripts start",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 CI=false react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",

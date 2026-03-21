@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState } from "react";
+import "./styles/ui.css";
+import { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -68,10 +69,35 @@ import GlobalSearchPage from "./modules/globalSearch/GlobalSearchPage";
 /* ======================= */
 
 function MainLayout() {
+
   const [showSidebar, setShowSidebar] = useState(window.innerWidth > 768);
 
+  useEffect(() => {
+
+    const handleResize = () => {
+
+      if (window.innerWidth > 768) {
+        setShowSidebar(true);
+      }
+
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+
+  }, [])
+  
+
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div
+  style={{
+    display: "flex",
+    minHeight: "100vh",
+    background: "radial-gradient(circle at top,#3b1f0f,#0f172a)",
+    color: "white"
+  }}
+>
       {showSidebar && (
         <Sidebar onClose={() => setShowSidebar(false)} />
       )}
@@ -79,7 +105,13 @@ function MainLayout() {
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <Header onToggleSidebar={() => setShowSidebar((s) => !s)} />
 
-        <div style={{ flex: 1, padding: 20 }}>
+        <div
+  style={{
+    flex: 1,
+    padding: 20,
+    animation: "fadeIn 0.3s ease"
+  }}
+>
           <Routes>
 
             {/* ===== Dashboard ===== */}

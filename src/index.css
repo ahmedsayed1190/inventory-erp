@@ -1,261 +1,80 @@
-/* ===== إعدادات عامة ===== */
-body {
-  font-family: Arial, Tahoma, sans-serif;
-  background-color: #f7f7f7;
-  margin: 0;
-  padding: 0;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+background: radial-gradient(circle at top,#3b1f0f,#0f172a);
+min-height:100vh;
+color:white;
+font-family: system-ui;
 }
 
-/* ===== تنسيق عام للأزرار ===== */
-button {
-  cursor: pointer;
+/* glass effect */
+
+.card{
+background: rgba(15,23,42,0.6);
+backdrop-filter: blur(10px);
+border-radius: 14px;
+border: 1px solid rgba(255,255,255,0.05);
 }
 
-/* ===== أزرار التنقل بين الفواتير ===== */
-.invoice-nav .btn {
-  min-width: 34px;
-  height: 32px;
-  padding: 0 6px;
-  font-size: 13px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* inputs */
+
+.input{
+width:100%;
+padding:10px;
+border-radius:10px;
+background:#020617;
+border:1px solid rgba(255,255,255,0.1);
+color:white;
+transition:0.2s;
 }
 
-/* زرار معطلة */
-.invoice-nav .btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+.input:focus{
+outline:none;
+border-color:#f97316;
 }
 
-/* ===== زرار أعلى الفاتورة (حفظ / حذف / PDF / جديد) ===== */
-.invoice-actions .btn {
-  min-width: 70px;
-  font-size: 14px;
-  padding: 6px 10px;
+/* buttons */
+
+.btn-primary{
+background: linear-gradient(90deg,#f97316,#ea580c);
+padding:10px 20px;
+border-radius:10px;
+color:white;
+font-weight:bold;
+transition:0.2s;
 }
 
-/* ===== جدول الفاتورة ===== */
-table {
-  background: white;
+.btn-primary:hover{
+transform:scale(1.03);
+}
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(10px);
 }
 
-table th,
-table td {
-  vertical-align: middle;
-  text-align: center;
+to{
+opacity:1;
+transform:translateY(0);
 }
 
-/* ================================================================= */
-/* =================== Customer ERP Input =========================== */
-/* ================================================================= */
-.customer-input-wrapper {
-  position: relative;
+}
+a {
+  transition: all 0.25s ease;
 }
 
-.customer-input {
-  height: 48px;
-  padding-right: 42px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  background-color: #fff;
+a:hover{
+  transform: translateX(6px);
+  background: rgba(255,255,255,0.05);
+}
+.card{
+transition: all 0.25s ease;
 }
 
-.customer-input::placeholder {
-  color: #adb5bd;
-}
-
-.customer-input:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
-}
-
-.customer-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  color: #6c757d;
-  pointer-events: none;
-}
-
-/* ================================================================= */
-/* ===================== ERP Dropdown =============================== */
-/* ================================================================= */
-.erp-select-wrapper {
-  position: relative;
-}
-
-.erp-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  margin-top: 4px;
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 9999;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-/* عنصر داخل القائمة */
-.erp-dropdown-item {
-  padding: 10px 14px;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.12s ease, color 0.12s ease;
-}
-
-/* Hover */
-.erp-dropdown-item:hover {
-  background-color: #0d6efd;
-  color: #fff;
-}
-
-/* النص الثانوي */
-.erp-muted {
-  color: #6c757d;
-  font-size: 12px;
-}
-
-/* muted أثناء hover */
-.erp-dropdown-item:hover .erp-muted {
-  color: #e9ecef;
-}
-
-/* ===== Selected / Active (ERP Style) ===== */
-.erp-dropdown-item.active {
-  background-color: #0b5ed7;
-  color: #fff;
-  font-weight: 500;
-}
-/* ================================================================= */
-/* =================== ERP Selected Inputs ========================= */
-/* ================================================================= */
-
-/* العميل */
-.erp-selected-customer {
-  background-color: #e7f1ff;   /* أزرق فاتح */
-  border-color: #0d6efd;       /* أزرق Bootstrap */
-  font-weight: 500;
-}
-
-/* الصنف */
-.erp-selected-item {
-  background-color: #eaf7ee;   /* أخضر فاتح */
-  border-color: #198754;       /* أخضر Bootstrap */
-  font-weight: 500;
-}
-/* علامة اختيار */
-.erp-dropdown-item.active::after {
-  content: "✔";
-  margin-right: auto;
-  font-size: 13px;
-  opacity: 0.9;
-}
-
-/* muted أثناء الاختيار */
-.erp-dropdown-item.active .erp-muted {
-  color: #e9ecef;
-}
-/* ================================================================= */
-/* =================== ERP Selected Input ========================== */
-/* ================================================================= */
-
-/* input بعد الاختيار */
-.erp-selected {
-  background-color: #e7f1ff;
-  border-color: #0d6efd;
-  font-weight: 500;
-}
-/* input صغير */
-.erp-input.small {
-  height: 32px;
-  font-size: 13px;
-  max-width: 180px;
-}
-/* ================================================================= */
-/* ========================= الطباعة =============================== */
-/* ================================================================= */
-@media print {
-  /* إخفاء كل الأزرار */
-  button {
-    display: none !important;
-  }
-
-  /* إخفاء الحقول */
-  input,
-  select {
-    border: none;
-    outline: none;
-  }
-
-  /* إخفاء dropdown */
-  .list-group,
-  .erp-dropdown {
-    display: none !important;
-  }
-
-  /* إزالة الخلفية */
-  body {
-    background: white;
-  }
-
-  /* تكبير الجدول في الطباعة */
-  table {
-    font-size: 14px;
-  }
-}
-/* ================================================================= */
-/* ===================== ERP FORM GRID ============================= */
-/* ================================================================= */
-
-.erp-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 خانات في الصف */
-  gap: 8px 16px;
-  margin-bottom: 12px;
-}
-
-/* كل خانة + اسمها */
-.form-row {
-  display: grid;
-  grid-template-columns: 120px 1fr; /* الاسم | الحقل */
-  align-items: center;
-}
-
-/* اسم الحقل */
-.form-row label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-}
-
-/* input / select داخل ERP */
-.erp-input {
-  height: 30px;            /* 🔥 ده اللي يقصّر المربع */
-  padding: 4px 6px;
-  font-size: 13px;
-  border-radius: 4px;
-}
-
-/* readonly */
-.erp-input.readonly {
-  background-color: #f3f3f3;
-}
-
-/* شاشات كبيرة */
-@media (min-width: 1200px) {
-  .erp-form-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.card:hover{
+transform: translateY(-5px);
+box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }

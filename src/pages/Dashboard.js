@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import FinancialSummary from "./FinancialSummary";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -9,8 +10,21 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+
 import { Bar } from "react-chartjs-2";
 
+/* 👇 خلي الأيقونات هنا */
+import {
+  DollarSign,
+  TrendingUp,
+  BarChart3,
+  AlertTriangle,
+  Wallet,
+  Users,
+  Package
+} from "lucide-react";
+
+/* 👇 بعد كل الـ imports */
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -19,7 +33,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
 function Dashboard() {
 
 const {
@@ -215,18 +228,22 @@ totalCash -= Number(t.amount || 0);
 
   const chartData = {
     labels: months,
-    datasets: [
-      {
-        label: "المبيعات",
-        data: salesData,
-        backgroundColor: "rgba(54,162,235,0.6)",
-      },
-      {
-        label: "الأرباح",
-        data: profitData,
-        backgroundColor: "rgba(75,192,192,0.6)",
-      },
-    ],
+   datasets: [
+  {
+    label: "المبيعات",
+    data: salesData,
+    backgroundColor: "rgba(59,130,246,0.7)",
+    borderRadius: 6,
+    barThickness: 18
+  },
+  {
+    label: "الأرباح",
+    data: profitData,
+    backgroundColor: "rgba(16,185,129,0.7)",
+    borderRadius: 6,
+    barThickness: 18
+  }
+]
   };
 
   return {
@@ -245,159 +262,197 @@ totalCash -= Number(t.amount || 0);
 return (
 <div className="container">
 
-<h2 className="mb-4">📊 لوحة التحكم</h2>
+<h2 className="mb-4" style={{display:"flex",alignItems:"center",gap:8}}>
+  <BarChart3 size={22}/>
+  لوحة التحكم
+</h2>
 
-<FinancialSummary />
 
-{/* ===== مؤشرات اليوم ===== */}
 
-<div className="row g-3 mt-3">
+{/* ===== الكروت الرئيسية ===== */}
 
-<div className="col-md-6">
-<div className="card text-center shadow-sm">
-<div className="card-body">
-<h6>مبيعات اليوم</h6>
-<h5 className="text-primary">
-{todaySales.toFixed(2)}
-</h5>
-</div>
-</div>
-</div>
-
-<div className="col-md-6">
-<div className="card text-center shadow-sm">
-<div className="card-body">
-<h6>ربح اليوم</h6>
-<h5 className={todayProfit >= 0 ? "text-success" : "text-danger"}>
-{todayProfit.toFixed(2)}
-</h5>
-</div>
-</div>
-</div>
-
-</div>
-
-{/* ===== الرسم البياني ===== */}
-
-<div className="card mt-4">
-<div className="card-body">
-
-<h5 className="mb-3">📈 مبيعات وأرباح آخر 6 شهور</h5>
-
-<div style={{ height: "220px" }}>
-<Bar
-data={chartData}
-options={{
-responsive: true,
-maintainAspectRatio: false
-}}
-/>
-</div>
-
-</div>
-</div>
-
-{/* ===== الإحصائيات ===== */}
-
-<div className="row g-3 mt-4">
-
-<div className="col-md-4">
-<div className="card text-center shadow-sm">
-<div className="card-body">
-<h6>أعلى صنف مبيعًا</h6>
-<h5 className="text-success">
-{topItem || "لا يوجد"}
-</h5>
-</div>
-</div>
-</div>
-
-<div className="col-md-4">
-  <div
-    className="card text-center shadow-sm"
-    style={{
-      cursor:"pointer",
-      transition:"0.25s",
-    }}
-    onMouseEnter={(e)=>{
-      e.currentTarget.style.transform="scale(1.03)";
-      e.currentTarget.style.boxShadow="0 10px 25px rgba(0,0,0,0.15)";
-    }}
-    onMouseLeave={(e)=>{
-      e.currentTarget.style.transform="scale(1)";
-      e.currentTarget.style.boxShadow="";
-    }}
-    onClick={()=>window.location.href="/low-stock-report"}
-  >
-
-    <div className="card-body">
-
-      <h6>تنبيه مخزون</h6>
-
-      <h5 className="text-danger">
-        {lowStockItems.map(i =>
-`${i.name} - ${i.warehouse} (${i.qty})`
-).join(", ")}
-      </h5>
-
-      <small className="text-muted">
-        اضغط لعرض التقرير
-      </small>
-
-    </div>
-
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(5,1fr)",
+    gap: 12,
+    marginTop: 15
+  }}
+>
+{/* تنبيه مخزون */}
+<div
+  className="glass-card text-center fade-in"
+  style={{cursor:"pointer"}}
+  onClick={()=>window.location.href="/low-stock-report"}
+>
+  <div className="card-body">
+    <h6><AlertTriangle size={16}/> تنبيه مخزون</h6>
+    <h6 style={{fontSize:12}}>
+      {lowStockItems.length > 0
+        ? lowStockItems.slice(0,2).map(i =>
+            `${i.name} (${i.qty})`
+          ).join(" - ")
+        : "لا يوجد نقص"}
+    </h6>
   </div>
 </div>
-<div className="col-md-4">
-<div className="card text-center shadow-sm">
-<div className="card-body">
-<h6>إجمالي الخزنة</h6>
-<h5>
-{totalCash.toFixed(2)}
+
+
+
+{/* عدد الأصناف */}
+<div className="glass-card text-center fade-in">
+  <div className="card-body">
+    <h6>عدد الأصناف</h6>
+    <h5 className="text-warning">
+  {JSON.parse(localStorage.getItem("items") || "[]").length}
 </h5>
+  </div>
 </div>
+
+{/* عدد العملاء */}
+<div className="glass-card text-center fade-in">
+  <div className="card-body">
+    <h6>عدد العملاء</h6>
+    <h5 className="text-warning">
+  {JSON.parse(localStorage.getItem("customers") || "[]").length}
+</h5>
+  </div>
 </div>
+
+  <div className="glass-card text-center fade-in">
+    <div className="card-body">
+      <h6><DollarSign size={16}/> مبيعات اليوم</h6>
+      <h5 className="text-primary">{todaySales.toFixed(2)}</h5>
+    </div>
+  </div>
+
+
+  <div className="glass-card text-center fade-in">
+    <div className="card-body">
+      <h6><Wallet size={16}/> إجمالي الخزنة</h6>
+      <h5 className="text-info">{totalCash.toFixed(2)}</h5>
+    </div>
+  </div>
+
+  <div className="glass-card text-center fade-in">
+    <div className="card-body">
+      <h6><Package size={16}/> أعلى صنف</h6>
+      <h5 className="text-success">
+  {topItem || "لا يوجد"}
+</h5>
+    </div>
+  </div>
+  <div className="glass-card text-center fade-in">
+  <div className="card-body">
+    <h6>رصيد اليوم</h6>
+    <h5 className="text-primary">0.00</h5>
+  </div>
 </div>
+<div className="glass-card text-center fade-in">
+  <div className="card-body">
+    <h6>إجمالي الكريديت</h6>
+    <h5 className="text-danger">500.00</h5>
+  </div>
+</div>
+<div className="glass-card text-center fade-in">
+  <div className="card-body">
+    <h6>شيكات متأخرة</h6>
+    <h5 className="text-danger">{overdueChequesCount}</h5>
+  </div>
+</div>
+
+
+  <div className="glass-card text-center fade-in">
+    <div className="card-body">
+      <h6><Users size={16}/> أعلى عميل</h6>
+      <h5 className="text-success">
+  {topCustomer ? topCustomer.name : "لا يوجد"}
+</h5>
+    </div>
+  </div>
 
 </div>
 
-{/* ===== أعلى عميل ===== */}
 
-<div className="row g-3 mt-4">
-
-<div className="col-md-4">
-<div className="card text-center shadow-sm">
-<div className="card-body">
-
-<h6>أعلى عميل مديونية</h6>
-
-{topCustomer ? (
-<>
-<div>{topCustomer.name}</div>
-<strong className="text-danger">
-{Number(topCustomer.balance).toFixed(2)}
-</strong>
-</>
-) : "لا يوجد"}
-
-</div>
-</div>
-</div>
-
-</div>
 
 {/* ===== تنبيهات ===== */}
 
 <div className="mt-4">
-
-{overdueChequesCount > 0 && (
-<div className="alert alert-warning">
-⚠️ يوجد {overdueChequesCount} شيك متأخر
-</div>
-)}
-
+  {overdueChequesCount > 0 && (
+    <div className="alert alert-warning">
+      ⚠️ يوجد {overdueChequesCount} شيك متأخر
+    </div>
+  )}
 </div>
 
+{/* ===== الرسم البياني ===== */}
+
+<div className="glass-card mt-4 fade-in">
+  <div className="card-body">
+
+    <h5 style={{display:"flex",alignItems:"center",gap:6}}>
+      <BarChart3 size={18}/>
+      مبيعات وأرباح آخر 6 شهور
+    </h5>
+
+    <div style={{ height: "220px" }}>
+    <Bar
+  data={chartData}
+  options={{
+    responsive: true,
+    maintainAspectRatio: false,
+
+    plugins: {
+      legend: {
+        labels: {
+          color: "#e2e8f0",
+          font: {
+            size: 12
+          }
+        }
+      },
+
+      tooltip: {
+        backgroundColor: "#020617",
+        borderColor: "#334155",
+        borderWidth: 1,
+        titleColor: "#fff",
+        bodyColor: "#cbd5e1",
+        padding: 10,
+        cornerRadius: 8
+      }
+    },
+
+    scales: {
+      x: {
+        ticks: {
+          color: "#94a3b8"
+        },
+        grid: {
+          display: false
+        }
+      },
+
+      y: {
+        ticks: {
+          color: "#94a3b8"
+        },
+        grid: {
+          color: "rgba(148,163,184,0.1)"
+        }
+      }
+    },
+
+    animation: {
+      duration: 1200,
+      easing: "easeOutQuart"
+    }
+  }}
+/>
+    </div>
+
+  </div>
+</div>
 </div>
 );
 }
