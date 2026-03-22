@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./styles/ui.css";
 import { useState, useEffect, useRef } from "react";
 import { ToastContainer } from "react-toastify";
@@ -308,7 +308,7 @@ function App() {
   const { user } = useAuth();
 
   return (
-    <BrowserRouter>
+    <HashRouter>
 
       <ToastContainer
         position="top-center"
@@ -347,7 +347,7 @@ function App() {
         />
 
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
