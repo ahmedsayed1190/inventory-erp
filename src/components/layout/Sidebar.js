@@ -44,8 +44,12 @@ useEffect(() => {
   transform: isActive ? "translateX(6px)" : "translateX(0)",
 
   borderLeft: isActive
-    ? "3px solid #38bdf8"
-    : "3px solid transparent"
+  ? "3px solid #38bdf8"
+  : "3px solid transparent",
+
+boxShadow: isActive
+  ? "0 0 12px rgba(56,189,248,0.3)"
+  : "none",
 });
  const sectionTitle = {
   marginTop: 18,
@@ -70,13 +74,23 @@ useEffect(() => {
     transition: "0.3s",
     fontSize: 12
   });
-
-  const hoverEffect = {
+  const sectionHover = {
   onMouseEnter: (e) => {
     e.currentTarget.style.background = "rgba(255,255,255,0.05)";
   },
   onMouseLeave: (e) => {
-    e.currentTarget.style.background = "";
+    e.currentTarget.style.background = "transparent";
+  }
+};
+
+ const hoverEffect = {
+  onMouseEnter: (e) => {
+    e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+    e.currentTarget.style.transform = "translateX(4px)";
+  },
+  onMouseLeave: (e) => {
+    e.currentTarget.style.background = "transparent";
+    e.currentTarget.style.transform = "translateX(0)";
   }
 };
 return (
@@ -104,7 +118,7 @@ return (
   </button>
 </div>
     {/* Overlay */}
-    {isMobile && (
+    {isMobile && !collapsed && (
       <div
         onClick={() => setCollapsed(true)}
         style={{
@@ -123,7 +137,7 @@ return (
     {/* Sidebar */}
    <div
   style={{
-    width: isMobile ? 260 : (collapsed ? 200 : 260),
+    width: isMobile ? 260 : (collapsed ? 80 : 260),
 
     position: "fixed",
     left: 0,
@@ -134,7 +148,7 @@ return (
   ? (collapsed ? "translateX(-100%)" : "translateX(0)")
   : "translateX(0)",
 
-transition: "transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+transition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
     background: "rgba(15,23,42,0.75)",
 backdropFilter: "blur(12px)",
 borderRight: "1px solid rgba(255,255,255,0.08)",
@@ -154,16 +168,11 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
       <div
   style={sectionTitle}
   onClick={() => toggleSection("definitions")}
-  onMouseEnter={(e)=>{
-    e.currentTarget.style.background="rgba(255,255,255,0.05)";
-  }}
-  onMouseLeave={(e)=>{
-    e.currentTarget.style.background="transparent";
-  }}
+  {...sectionHover}
 >
-        <span>📦 {t("sidebar.definitions")}</span>
-        <span style={arrowStyle("definitions")}>▸</span>
-      </div>
+  <span>📦 {t("sidebar.definitions")}</span>
+  <span style={arrowStyle("definitions")}>▸</span>
+</div>
 
       {openSection === "definitions" && (
         <>
@@ -198,10 +207,14 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
       )}
 
       {/* ================= المشتريات ================= */}
-      <div style={sectionTitle} onClick={() => toggleSection("purchases")}>
-        <span>🛒 {t("sidebar.purchases")}</span>
-        <span style={arrowStyle("purchases")}>▸</span>
-      </div>
+  <div
+  style={sectionTitle}
+  onClick={() => toggleSection("purchases")}
+  {...sectionHover}
+>
+  <span>🛒 {t("sidebar.purchases")}</span>
+  <span style={arrowStyle("purchases")}>▸</span>
+</div>
 
       {openSection === "purchases" && (
   <>
@@ -227,16 +240,11 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
      <div
   style={sectionTitle}
   onClick={() => toggleSection("sales")}
-  onMouseEnter={(e)=>{
-    e.currentTarget.style.background="rgba(255,255,255,0.05)";
-  }}
-  onMouseLeave={(e)=>{
-    e.currentTarget.style.background="transparent";
-  }}
+  {...sectionHover}
 >
-        <span>💵 {t("sidebar.sales")}</span>
-        <span style={arrowStyle("sales")}>▸</span>
-      </div>
+  <span>💵 {t("sidebar.sales")}</span>
+  <span style={arrowStyle("sales")}>▸</span>
+</div>
 
       {openSection === "sales" && (
   <>
@@ -258,7 +266,11 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
   </>
 )}
 {/* ================= المصروفات ================= */}
-<div style={sectionTitle} onClick={() => toggleSection("expenses")}>
+<div
+  style={sectionTitle}
+  onClick={() => toggleSection("expenses")}
+  {...sectionHover}
+>
   <span>💸 {t("sidebar.expenses")}</span>
   <span style={arrowStyle("expenses")}>▸</span>
 </div>
@@ -273,7 +285,11 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
 )}
 
 {/* ================= الخزينة ================= */}
-<div style={sectionTitle} onClick={() => toggleSection("cash")}>
+<div
+  style={sectionTitle}
+  onClick={() => toggleSection("cash")}
+  {...sectionHover}
+>
   <span>🏦 {t("sidebar.cash")}</span>
   <span style={arrowStyle("cash")}>▸</span>
 </div>
@@ -288,10 +304,14 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
   📋 {t("sidebarLinks.cashList")}
 </NavLink>
   </>
-)}      <div style={sectionTitle} onClick={() => toggleSection("transfer")}>
-        <span>🔄 {t("sidebarLinks.stockTransfer")}</span>
-        <span style={arrowStyle("transfer")}>▸</span>
-      </div>
+)}    <div
+  style={sectionTitle}
+  onClick={() => toggleSection("transfer")}
+  {...sectionHover}
+>
+  <span>🔄 {t("sidebarLinks.stockTransfer")}</span>
+  <span style={arrowStyle("transfer")}>▸</span>
+</div>
 
       {openSection === "transfer" && (
         <>
@@ -302,10 +322,14 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
       )}
 
       {/* ================= التقارير ================= */}
-      <div style={sectionTitle} onClick={() => toggleSection("reports")}>
-        <span>📊 {t("sidebar.reports")}</span>
-        <span style={arrowStyle("reports")}>▸</span>
-      </div>
+     <div
+  style={sectionTitle}
+  onClick={() => toggleSection("reports")}
+  {...sectionHover}
+>
+  <span>📊 {t("sidebar.reports")}</span>
+  <span style={arrowStyle("reports")}>▸</span>
+</div>
 
       {openSection === "reports" && (
         <>
@@ -324,10 +348,14 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
       )}
 
       {/* ================= الكشوفات ================= */}
-      <div style={sectionTitle} onClick={() => toggleSection("lists")}>
-        <span>📋 {t("sidebar.lists")}</span>
-        <span style={arrowStyle("lists")}>▸</span>
-      </div>
+      <div
+  style={sectionTitle}
+  onClick={() => toggleSection("lists")}
+  {...sectionHover}
+>
+  <span>📋 {t("sidebar.lists")}</span>
+  <span style={arrowStyle("lists")}>▸</span>
+</div>
 
      {openSection === "lists" && (
   <>
@@ -354,10 +382,14 @@ borderRight: "1px solid rgba(255,255,255,0.08)",
 )}
 
       {/* ================= الإعدادات ================= */}
-      <div style={sectionTitle} onClick={() => toggleSection("settings")}>
-        <span>⚙️ {t("sidebar.settings")}</span>
-        <span style={arrowStyle("settings")}>▸</span>
-      </div>
+  <div
+  style={sectionTitle}
+  onClick={() => toggleSection("settings")}
+  {...sectionHover}
+>
+  <span>⚙️ {t("sidebar.settings")}</span>
+  <span style={arrowStyle("settings")}>▸</span>
+</div>
 
       {openSection === "settings" && (
         <>
