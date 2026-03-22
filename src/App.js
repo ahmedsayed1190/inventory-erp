@@ -95,35 +95,32 @@ function MainLayout() {
 
   return (
   <div
-    style={{
-      background: "#0f172a",
-      minHeight: "100vh",
-      overflowX: "hidden",
-      position: "relative",
-
-      touchAction: "none" // 🔥 هنا بالظبط
-    }}
-
+  style={{
+    background: "#0f172a",
+    minHeight: "100vh",
+    overflowX: "hidden",
+    position: "relative",
+    touchAction: "pan-y"
+  }}
 
   onTouchStart={(e) => {
-  const x = e.touches[0].clientX;
+    const x = e.touches[0].clientX;
 
-  // 👇 بس من الحافة (زي ChatGPT)
-  if (collapsed && x < 25) {
-    setIsDragging(true);
-    setTouchStartX(x);
-  }
+    if (collapsed && x < 25) {
+      setIsDragging(true);
+      setTouchStartX(x);
+    }
 
-  // 👇 لو مفتوح → اسحب من أي مكان
-  if (!collapsed) {
-    setIsDragging(true);
-    setTouchStartX(x);
-  }
-}}
-onTouchMove={(e) => {
+    if (!collapsed) {
+      setIsDragging(true);
+      setTouchStartX(x);
+    }
+  }}
+
+ onTouchMove={(e) => {
   if (!isDragging) return;
 
-  e.preventDefault(); // 🔥 أهم سطر
+  e.preventDefault(); // 🔥 أهم سطر (كان ناقصك)
 
   const currentX = e.touches[0].clientX;
   const diff = currentX - touchStartX;
@@ -140,18 +137,31 @@ onTouchMove={(e) => {
 
   setTranslateX(newTranslate);
 }}
-onTouchEnd={() => {
+
+  // 👇 هنا تحط الكود بتاعك
+ onTouchEnd={() => {
   if (!isDragging) return;
 
   setIsDragging(false);
 
-  // 👇 لو أكتر من نص → افتح
-  if (translateX > -130) {
-    setCollapsed(false);
-    setTranslateX(0);
+  if (!collapsed) {
+    // 👉 قفل
+    if (translateX < -120) {
+      setCollapsed(true);
+      setTranslateX(-260);
+    } else {
+      setCollapsed(false);
+      setTranslateX(0);
+    }
   } else {
-    setCollapsed(true);
-    setTranslateX(-260);
+    // 👉 فتح
+    if (translateX > -180) {
+      setCollapsed(false);
+      setTranslateX(0);
+    } else {
+      setCollapsed(true);
+      setTranslateX(-260);
+    }
   }
 }}
 >
@@ -195,7 +205,6 @@ transform: isMobile
 transition: isDragging
   ? "none"
   : "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
-    ttransition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
   }}
 >
         <Header onToggleSidebar={() => setCollapsed(!collapsed)} />
