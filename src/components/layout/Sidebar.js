@@ -143,7 +143,7 @@ style={{
 >
 
       {/* ================= Dashboard ================= */}
-<NavLink to="/dashboard" style={linkStyle} {...hoverEffect}>
+<NavLink to="/dashboard" end className={({ isActive }) => isActive ? "active-link" : "link"}>
   📊 {t("sidebar.dashboard")}
 </NavLink>
       {/* ================= التعريفات ================= */}
@@ -158,31 +158,31 @@ style={{
 
       {openSection === "definitions" && (
         <>
-          <NavLink to="/items" style={linkStyle} {...hoverEffect}>
+         <NavLink to="/items" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🧾 {t("sidebarLinks.items")}
 </NavLink>
 
-<NavLink to="/warehouses" style={linkStyle} {...hoverEffect}>
+<NavLink to="/warehouses" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🏬 {t("sidebarLinks.warehouses")}
 </NavLink>
 
-<NavLink to="/customers" style={linkStyle} {...hoverEffect}>
+<NavLink to="/customers" className={({ isActive }) => isActive ? "active-link" : "link"}>
   👥 {t("sidebarLinks.customers")}
 </NavLink>
 
-<NavLink to="/suppliers" style={linkStyle} {...hoverEffect}>
+<NavLink to="/suppliers" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🚚 {t("sidebarLinks.suppliers")}
 </NavLink>
 
-<NavLink to="/expenses" style={linkStyle} {...hoverEffect}>
+<NavLink to="/expenses" className={({ isActive }) => isActive ? "active-link" : "link"}>
   💸 {t("sidebarLinks.expensesDef")}
 </NavLink>
 
-<NavLink to="/revenues" style={linkStyle} {...hoverEffect}>
+<NavLink to="/revenues" className={({ isActive }) => isActive ? "active-link" : "link"}>
   💰 {t("sidebarLinks.revenuesDef")}
 </NavLink>
 
-<NavLink to="/cash-accounts" style={linkStyle} {...hoverEffect}>
+<NavLink to="/cash-accounts" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🏦 {t("sidebarLinks.cashAccounts")}
 </NavLink>
         </>
@@ -200,19 +200,19 @@ style={{
 
       {openSection === "purchases" && (
   <>
-    <NavLink to="/purchase-invoice" style={linkStyle} {...hoverEffect}>
+   <NavLink to="/purchase-invoice" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📥 {t("sidebarLinks.purchaseInvoice")}
 </NavLink>
 
-<NavLink to="/purchase-return" style={linkStyle} {...hoverEffect}>
+<NavLink to="/purchase-return" className={({ isActive }) => isActive ? "active-link" : "link"}>
   ↩️ {t("sidebarLinks.purchaseReturn")}
 </NavLink>
 
-<NavLink to="/supplier-ledger" style={linkStyle} {...hoverEffect}>
+<NavLink to="/supplier-ledger" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📑 {t("sidebarLinks.supplierLedger")}
 </NavLink>
 
-<NavLink to="/supplier-total-balances" style={linkStyle} {...hoverEffect}>
+<NavLink to="/supplier-total-balances" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📊 {t("sidebarLinks.supplierTotalBalances")}
 </NavLink>
   </>
@@ -230,19 +230,19 @@ style={{
 
       {openSection === "sales" && (
   <>
-    <NavLink to="/invoice" style={linkStyle} {...hoverEffect}>
+   <NavLink to="/invoice" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🧾 {t("sidebarLinks.salesInvoice")}
 </NavLink>
 
-<NavLink to="/sales-return" style={linkStyle} {...hoverEffect}>
+<NavLink to="/sales-return" className={({ isActive }) => isActive ? "active-link" : "link"}>
   ↩️ {t("sidebarLinks.salesReturn")}
 </NavLink>
 
-<NavLink to="/customer-ledger" style={linkStyle} {...hoverEffect}>
+<NavLink to="/customer-ledger" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📄 {t("sidebarLinks.customerLedger")}
 </NavLink>
 
-<NavLink to="/customer-total-balances" style={linkStyle} {...hoverEffect}>
+<NavLink to="/customer-total-balances" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📊 {t("sidebarLinks.customerTotal")}
 </NavLink>
   </>
@@ -260,7 +260,7 @@ style={{
 {openSection === "expenses" && (
   <>
 
-    <NavLink to="/lists/expenses" style={linkStyle} {...hoverEffect}>
+    <NavLink to="/lists/expenses" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📋 {t("sidebarLinks.expensesList")}
 </NavLink>
   </>
@@ -278,11 +278,11 @@ style={{
 
 {openSection === "cash" && (
   <>
-    <NavLink to="/add-cash-transaction" style={linkStyle} {...hoverEffect}>
+    <NavLink to="/add-cash-transaction" className={({ isActive }) => isActive ? "active-link" : "link"}>
   ➕ {t("sidebarLinks.cashTransaction")}
 </NavLink>
 
-<NavLink to="/lists/cash" style={linkStyle} {...hoverEffect}>
+<NavLink to="/lists/cash" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📋 {t("sidebarLinks.cashList")}
 </NavLink>
   </>
@@ -297,7 +297,7 @@ style={{
 
       {openSection === "transfer" && (
         <>
-          <NavLink to="/stock-transfer" style={linkStyle} {...hoverEffect}>
+         <NavLink to="/stock-transfer" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🏬 {t("sidebarLinks.stockTransfer")}
 </NavLink>
         </>
@@ -315,15 +315,15 @@ style={{
 
       {openSection === "reports" && (
         <>
-          <NavLink to="/item-movement-report" style={linkStyle} {...hoverEffect}>
+         <NavLink to="/item-movement-report" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🔄 {t("sidebarLinks.itemMovement")}
 </NavLink>
 
-<NavLink to="/stock-report" style={linkStyle} {...hoverEffect}>
+<NavLink to="/stock-report" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📦 {t("sidebarLinks.stockReport")}
 </NavLink>
 
-<NavLink to="/profit-report" style={linkStyle} {...hoverEffect}>
+<NavLink to="/profit-report" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📈 {t("sidebarLinks.profitReport")}
 </NavLink>
         </>
@@ -341,23 +341,23 @@ style={{
 
      {openSection === "lists" && (
   <>
-   <NavLink to="/lists/items" style={linkStyle} {...hoverEffect}>
+  <NavLink to="/lists/items" className={({ isActive }) => isActive ? "active-link" : "link"}>
   📦 {t("sidebarLinks.itemsList")}
 </NavLink>
 
-<NavLink to="/lists/suppliers" style={linkStyle} {...hoverEffect}>
+<NavLink to="/lists/suppliers" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🚚 {t("sidebarLinks.suppliersList")}
 </NavLink>
 
-<NavLink to="/lists/customers" style={linkStyle} {...hoverEffect}>
+<NavLink to="/lists/customers" className={({ isActive }) => isActive ? "active-link" : "link"}>
   👥 {t("sidebarLinks.customersList")}
 </NavLink>
 
-<NavLink to="/lists/expenses" style={linkStyle} {...hoverEffect}>
+<NavLink to="/lists/expenses" className={({ isActive }) => isActive ? "active-link" : "link"}>
   💸 {t("sidebarLinks.expensesList")}
 </NavLink>
 
-<NavLink to="/lists/revenues" style={linkStyle} {...hoverEffect}>
+<NavLink to="/lists/revenues" className={({ isActive }) => isActive ? "active-link" : "link"}>
   💰 {t("sidebarLinks.revenuesList")}
 </NavLink>
   </>
@@ -375,15 +375,15 @@ style={{
 
       {openSection === "settings" && (
         <>
-         <NavLink to="/settings/company" style={linkStyle} {...hoverEffect}>
+        <NavLink to="/settings/company" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🏢 {t("sidebarLinks.companySettings")}
 </NavLink>
 
-<NavLink to="/settings/users" style={linkStyle} {...hoverEffect}>
+<NavLink to="/settings/users" className={({ isActive }) => isActive ? "active-link" : "link"}>
   👤 {t("sidebarLinks.usersSettings")}
 </NavLink>
 
-<NavLink to="/settings/system" style={linkStyle} {...hoverEffect}>
+<NavLink to="/settings/system" className={({ isActive }) => isActive ? "active-link" : "link"}>
   🗑️ {t("sidebarLinks.systemSettings")}
 </NavLink>
         </>
