@@ -2,6 +2,7 @@
 body {
   background: radial-gradient(circle at top, #0f172a, #020617);
   color: #e2e8f0;
+  overscroll-behavior-x: none;
 }
 
 /* الكروت */
@@ -11,12 +12,19 @@ body {
   border: 1px solid rgba(255,255,255,0.05);
   border-radius: 14px;
   transition: all 0.25s ease;
+  cursor: pointer;
 }
 
-/* hover */
 .glass-card:hover {
   transform: translateY(-5px) scale(1.01);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.4),
+    0 0 10px rgba(59,130,246,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.glass-card:active {
+  transform: scale(0.97);
 }
 
 /* العناوين */
@@ -25,55 +33,42 @@ body {
   font-size: 14px;
   color: #94a3b8;
 }
-.glass-card {
-  background: rgba(15,23,42,0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 12px;
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
 
-.glass-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.glass-card:hover {
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.4),
-    0 0 10px rgba(59,130,246,0.3);
-}
-.glass-card {
-  transition: all 0.25s ease;
-}
+/* ===== Sidebar Links ===== */
 
-.glass-card:active {
-  transform: scale(0.97);
-}
-body {
-  overscroll-behavior-x: none;
-}
 .link {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
-  color: #cbd5e1;
-  text-decoration: none;
-  border-radius: 10px;
+
+  padding: 10px 14px;
   margin-bottom: 6px;
+
+  text-decoration: none;
+  color: #cbd5e1;
+
+  border-radius: 10px;
+
+  background: transparent;
+
   transition: all 0.25s ease;
+
+  border: none;
+  outline: none;
 }
 
 .link:hover {
   background: rgba(255,255,255,0.05);
+  transform: translateX(4px);
 }
 
+/* Active */
 .active-link {
-  background: rgba(56,189,248,0.15);
-  color: #38bdf8;
-  transform: translateX(6px);
+  background: linear-gradient(
+    to right,
+    rgba(56,189,248,0.2),
+    rgba(56,189,248,0.05)
+  );
+
   border-left: 3px solid #38bdf8;
-  box-shadow: 0 0 12px rgba(56,189,248,0.3);
 }

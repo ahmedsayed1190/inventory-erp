@@ -68,7 +68,9 @@ import GlobalSearchPage from "./modules/globalSearch/GlobalSearchPage";
 /* ===== Main Layout ===== */
 /* ======================= */
 function MainLayout() {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(
+  localStorage.getItem("sidebar") === "true"
+);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // 👇 ضيف دول هنا
@@ -84,8 +86,7 @@ function MainLayout() {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
 
-      if (!mobile) setCollapsed(false);
-      else setCollapsed(true);
+      if (mobile) setCollapsed(true);
     };
 
     handleResize(); // مهم
@@ -169,19 +170,24 @@ onTouchCancel={() => {
 >
       
       {/* Overlay */}
-     {isMobile && !collapsed && (
+   {isMobile && !collapsed && (
   <div
-    onClick={() => setCollapsed(true)}
+    onClick={() => {
+      setCollapsed(true);
+      setTranslateX(-260);
+      translateRef.current = -260;
+    }}
     style={{
-  position: "fixed",
-  inset: 0,
-  background: "rgba(0,0,0,0.6)",
-  backdropFilter: "blur(4px)",
-  zIndex: 9998,
-  opacity: Math.min(1, (translateX + 260) / 260),
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.6)",
+      backdropFilter: "blur(4px)",
+      zIndex: 9998,
 
-  pointerEvents: isDragging ? "none" : "auto"
-}}
+      opacity: Math.min(1, (translateX + 260) / 260),
+
+      pointerEvents: isDragging ? "none" : "auto"
+    }}
   />
 )}
 
@@ -194,22 +200,40 @@ onTouchCancel={() => {
 />
 
       {/* Content */}
-    <div
+   <div
   style={{
+    marginTop: 50, // 👈 مهم عشان الهيدر ثابت
     marginLeft: isMobile
-  ? 0
-  : (collapsed ? 0 : 260),
+      ? 0
+      : (collapsed ? 0 : 260),
 
-transform: isMobile
-  ? `translateX(${Math.max(0, translateX + 260)}px)`
-  : "none",
+    transform: isMobile
+      ? `translateX(${Math.max(0, translateX + 260)}px)`
+      : "none",
 
-transition: isDragging
-  ? "none"
-  : "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
+    transition: isDragging
+      ? "none"
+      : "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
   }}
 >
-        <Header onToggleSidebar={() => setCollapsed(!collapsed)} />
+
+    <Header
+  onToggleSidebar={() => {
+    const newState = !collapsed;
+
+    setCollapsed(newState);
+    localStorage.setItem("sidebar", newState);
+
+    // 👇 مهم جدا للموبايل
+    if (newState) {
+      setTranslateX(-260);
+      translateRef.current = -260;
+    } else {
+      setTranslateX(0);
+      translateRef.current = 0;
+    }
+  }}
+/>
 
         <div style={{ padding: 20 }}>
           <Routes>

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 function Sidebar({ collapsed, setCollapsed, translateX, isDragging }) {
   const { t } = useTranslation();
+  const [indicatorTop, setIndicatorTop] = useState(0);
 const [openSection, setOpenSection] = useState(null);
 const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 useEffect(() => {
@@ -21,36 +22,7 @@ useEffect(() => {
     setOpenSection(openSection === section ? null : section);
   };
 
- const linkStyle = ({ isActive }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: 10,
 
-  padding: collapsed ? "8px 10px" : "10px 16px",
-
-  textDecoration: "none",
-  color: isActive ? "#38bdf8" : "#cbd5e1",
-
-  background: isActive
-    ? "rgba(56,189,248,0.15)"
-    : "transparent",
-
-  borderRadius: 10,
-  marginBottom: 6,
-  fontSize: collapsed ? 12 : 13,
-
-  transition: "all 0.25s cubic-bezier(0.22, 1, 0.36, 1)",
-
-  transform: isActive ? "translateX(6px)" : "translateX(0)",
-
-  borderLeft: isActive
-  ? "3px solid #38bdf8"
-  : "3px solid transparent",
-
-boxShadow: isActive
-  ? "0 0 12px rgba(56,189,248,0.3)"
-  : "none",
-});
  const sectionTitle = {
   marginTop: 18,
   marginBottom: 6,
@@ -83,43 +55,34 @@ boxShadow: isActive
   }
 };
 
- const hoverEffect = {
-  onMouseEnter: (e) => {
-    e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-    e.currentTarget.style.transform = "translateX(4px)";
-  },
-  onMouseLeave: (e) => {
-    e.currentTarget.style.background = "transparent";
-    e.currentTarget.style.transform = "translateX(0)";
-  }
-};
 return (
   <>
  
     {/* Overlay */}
-    {isMobile && !collapsed && (
-      <div
-        onClick={() => setCollapsed(true)}
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          background: "rgba(0,0,0,0.4)",
-          zIndex: 9998
-        }}
-      />
-    )}
-      
+    
+   {isMobile && !collapsed && (
+  <div
+    onClick={() => setCollapsed(true)}
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.6)",
+      backdropFilter: "blur(4px)",
+      zIndex: 9998,
+      opacity: Math.min(1, (translateX + 260) / 260),
+      pointerEvents: isDragging ? "none" : "auto"
+    }}
+  />
+)}
 
     {/* Sidebar */}
    <div
-style={{
-  width: isMobile ? 260 : (collapsed ? 80 : 260),
+  className="sidebar"
+  style={{
+    width: isMobile ? 260 : (collapsed ? 80 : 260),
   position: "fixed",
   left: 0,
-  top: 0,
+  top: 50,
   zIndex: 9999,
 
   transform: isMobile
@@ -137,13 +100,25 @@ style={{
 
   color: "#e2e8f0",
   padding: 18,
-  height: "100vh",
+  height: "calc(100vh - 50px)",
   overflowY: "auto",
 }}
 >
-
+<div
+  className="active-indicator"
+  style={{ top: indicatorTop }}
+/>
       {/* ================= Dashboard ================= */}
-<NavLink to="/dashboard" end className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink
+  to="/dashboard"
+  end
+  className={({ isActive }) => isActive ? "active-link link" : "link"}
+  ref={(el) => {
+    if (el && el.classList.contains("active-link")) {
+      setIndicatorTop(el.offsetTop);
+    }
+  }}
+>
   📊 {t("sidebar.dashboard")}
 </NavLink>
       {/* ================= التعريفات ================= */}
@@ -158,31 +133,31 @@ style={{
 
       {openSection === "definitions" && (
         <>
-         <NavLink to="/items" className={({ isActive }) => isActive ? "active-link" : "link"}>
+         <NavLink to="/items" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🧾 {t("sidebarLinks.items")}
 </NavLink>
 
-<NavLink to="/warehouses" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/warehouses" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🏬 {t("sidebarLinks.warehouses")}
 </NavLink>
 
-<NavLink to="/customers" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/customers" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   👥 {t("sidebarLinks.customers")}
 </NavLink>
 
-<NavLink to="/suppliers" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/suppliers" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🚚 {t("sidebarLinks.suppliers")}
 </NavLink>
 
-<NavLink to="/expenses" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/expenses" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   💸 {t("sidebarLinks.expensesDef")}
 </NavLink>
 
-<NavLink to="/revenues" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/revenues" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   💰 {t("sidebarLinks.revenuesDef")}
 </NavLink>
 
-<NavLink to="/cash-accounts" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/cash-accounts" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🏦 {t("sidebarLinks.cashAccounts")}
 </NavLink>
         </>
@@ -200,19 +175,19 @@ style={{
 
       {openSection === "purchases" && (
   <>
-   <NavLink to="/purchase-invoice" className={({ isActive }) => isActive ? "active-link" : "link"}>
+   <NavLink to="/purchase-invoice" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📥 {t("sidebarLinks.purchaseInvoice")}
 </NavLink>
 
-<NavLink to="/purchase-return" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/purchase-return" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   ↩️ {t("sidebarLinks.purchaseReturn")}
 </NavLink>
 
-<NavLink to="/supplier-ledger" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/supplier-ledger" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📑 {t("sidebarLinks.supplierLedger")}
 </NavLink>
 
-<NavLink to="/supplier-total-balances" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/supplier-total-balances" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📊 {t("sidebarLinks.supplierTotalBalances")}
 </NavLink>
   </>
@@ -230,19 +205,19 @@ style={{
 
       {openSection === "sales" && (
   <>
-   <NavLink to="/invoice" className={({ isActive }) => isActive ? "active-link" : "link"}>
+   <NavLink to="/invoice" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🧾 {t("sidebarLinks.salesInvoice")}
 </NavLink>
 
-<NavLink to="/sales-return" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/sales-return" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   ↩️ {t("sidebarLinks.salesReturn")}
 </NavLink>
 
-<NavLink to="/customer-ledger" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/customer-ledger" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📄 {t("sidebarLinks.customerLedger")}
 </NavLink>
 
-<NavLink to="/customer-total-balances" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/customer-total-balances" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📊 {t("sidebarLinks.customerTotal")}
 </NavLink>
   </>
@@ -260,7 +235,7 @@ style={{
 {openSection === "expenses" && (
   <>
 
-    <NavLink to="/lists/expenses" className={({ isActive }) => isActive ? "active-link" : "link"}>
+   <NavLink to="/lists/expenses" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📋 {t("sidebarLinks.expensesList")}
 </NavLink>
   </>
@@ -278,11 +253,11 @@ style={{
 
 {openSection === "cash" && (
   <>
-    <NavLink to="/add-cash-transaction" className={({ isActive }) => isActive ? "active-link" : "link"}>
+    <NavLink to="/add-cash-transaction" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   ➕ {t("sidebarLinks.cashTransaction")}
 </NavLink>
 
-<NavLink to="/lists/cash" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/lists/cash" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📋 {t("sidebarLinks.cashList")}
 </NavLink>
   </>
@@ -297,7 +272,7 @@ style={{
 
       {openSection === "transfer" && (
         <>
-         <NavLink to="/stock-transfer" className={({ isActive }) => isActive ? "active-link" : "link"}>
+        <NavLink to="/stock-transfer" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🏬 {t("sidebarLinks.stockTransfer")}
 </NavLink>
         </>
@@ -315,15 +290,15 @@ style={{
 
       {openSection === "reports" && (
         <>
-         <NavLink to="/item-movement-report" className={({ isActive }) => isActive ? "active-link" : "link"}>
+    <NavLink to="/item-movement-report" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🔄 {t("sidebarLinks.itemMovement")}
 </NavLink>
 
-<NavLink to="/stock-report" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/stock-report" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📦 {t("sidebarLinks.stockReport")}
 </NavLink>
 
-<NavLink to="/profit-report" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/profit-report" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📈 {t("sidebarLinks.profitReport")}
 </NavLink>
         </>
@@ -341,23 +316,19 @@ style={{
 
      {openSection === "lists" && (
   <>
-  <NavLink to="/lists/items" className={({ isActive }) => isActive ? "active-link" : "link"}>
+  <NavLink to="/lists/items" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📦 {t("sidebarLinks.itemsList")}
 </NavLink>
 
-<NavLink to="/lists/suppliers" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/lists/suppliers" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🚚 {t("sidebarLinks.suppliersList")}
 </NavLink>
 
-<NavLink to="/lists/customers" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/lists/customers" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   👥 {t("sidebarLinks.customersList")}
 </NavLink>
 
-<NavLink to="/lists/expenses" className={({ isActive }) => isActive ? "active-link" : "link"}>
-  💸 {t("sidebarLinks.expensesList")}
-</NavLink>
-
-<NavLink to="/lists/revenues" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/lists/revenues" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   💰 {t("sidebarLinks.revenuesList")}
 </NavLink>
   </>
@@ -375,15 +346,15 @@ style={{
 
       {openSection === "settings" && (
         <>
-        <NavLink to="/settings/company" className={({ isActive }) => isActive ? "active-link" : "link"}>
+        <NavLink to="/settings/company" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🏢 {t("sidebarLinks.companySettings")}
 </NavLink>
 
-<NavLink to="/settings/users" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/settings/users" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   👤 {t("sidebarLinks.usersSettings")}
 </NavLink>
 
-<NavLink to="/settings/system" className={({ isActive }) => isActive ? "active-link" : "link"}>
+<NavLink to="/settings/system" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   🗑️ {t("sidebarLinks.systemSettings")}
 </NavLink>
         </>

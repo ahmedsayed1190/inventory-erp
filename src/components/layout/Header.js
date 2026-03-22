@@ -9,28 +9,50 @@ function Header({ onToggleSidebar }) {
   if (!user) return null;
 
   return (
-    <div
-      style={{
-        height: 50,
-        background: "linear-gradient(90deg,#0f172a,#1e293b)",
-boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
-        color: "#fff",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 20px"
-      }}
-    >
+   <div
+  style={{
+    position: "fixed",   // 🔥 مهم جدا
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10000,       // فوق كل حاجة
+
+    height: 50,
+    background: "linear-gradient(90deg,#0f172a,#1e293b)",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
+    color: "#fff",
+
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 20px"
+  }}
+>
       {/* ☰ زر السايدبار + اللوجو */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-     <button
+   <button
   onClick={onToggleSidebar}
   style={{
-    fontSize: 20,
-    background: "transparent",
-    border: "none",
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    border: "1px solid rgba(255,255,255,0.1)",
+    background: "rgba(255,255,255,0.05)",
     color: "#fff",
-    cursor: "pointer"
+    fontSize: 18,
+    cursor: "pointer",
+
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    transition: "all 0.25s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.background = "rgba(255,255,255,0.05)";
   }}
 >
   ☰
