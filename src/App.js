@@ -70,6 +70,8 @@ import GlobalSearchPage from "./modules/globalSearch/GlobalSearchPage";
 function MainLayout() {
   const [collapsed, setCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [touchStartX, setTouchStartX] = useState(0);
+const [touchEndX, setTouchEndX] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -86,7 +88,31 @@ function MainLayout() {
   }, []);
 
   return (
-    <div style={{ background: "#0f172a", minHeight: "100vh" }}>
+    <div
+  style={{ background: "#0f172a", minHeight: "100vh" }}
+
+  onTouchStart={(e) => {
+    setTouchStartX(e.touches[0].clientX);
+  }}
+
+  onTouchMove={(e) => {
+    setTouchEndX(e.touches[0].clientX);
+  }}
+
+  onTouchEnd={() => {
+    const diff = touchEndX - touchStartX;
+
+    // 👉 فتح من الشمال
+    if (diff > 70 && touchStartX < 50 && isMobile) {
+      setCollapsed(false);
+    }
+
+    // 👉 قفل
+    if (diff < -70 && isMobile) {
+      setCollapsed(true);
+    }
+  }}
+>
       
       {/* Overlay */}
       {isMobile && !collapsed && (
@@ -106,10 +132,10 @@ function MainLayout() {
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
       {/* Content */}
-     <div
+    <div
   style={{
-    marginLeft: isMobile ? 0 : 260,
-    transition: "0.3s"
+    marginLeft: isMobile ? 0 : (collapsed ? 0 : 260),
+    ttransition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
   }}
 >
         <Header onToggleSidebar={() => setCollapsed(!collapsed)} />
