@@ -95,24 +95,26 @@ function MainLayout() {
 
   return (
   <div
-  style={{
-    background: "#0f172a",
-    minHeight: "100vh",
-    overflowX: "hidden", // 🔥 يمنع الشاشة البيضا
-    position: "relative"
-  }}
+    style={{
+      background: "#0f172a",
+      minHeight: "100vh",
+      overflowX: "hidden",
+      position: "relative",
+
+      touchAction: "none" // 🔥 هنا بالظبط
+    }}
 
 
   onTouchStart={(e) => {
   const x = e.touches[0].clientX;
 
-  // 👉 فتح من الحافة فقط
-  if (collapsed && x < 30) {
+  // 👇 بس من الحافة (زي ChatGPT)
+  if (collapsed && x < 25) {
     setIsDragging(true);
     setTouchStartX(x);
   }
 
-  // 👉 قفل من أي مكان داخل الشاشة
+  // 👇 لو مفتوح → اسحب من أي مكان
   if (!collapsed) {
     setIsDragging(true);
     setTouchStartX(x);
@@ -121,25 +123,23 @@ function MainLayout() {
 onTouchMove={(e) => {
   if (!isDragging) return;
 
+  e.preventDefault(); // 🔥 أهم سطر
+
   const currentX = e.touches[0].clientX;
   const diff = currentX - touchStartX;
 
   let newTranslate;
 
   if (collapsed) {
-    // 👉 فتح
     newTranslate = -260 + diff;
   } else {
-    // 👉 قفل (نبدأ من 0 ونمشي سالب)
     newTranslate = diff;
   }
 
-  // 👇 أهم حاجة (limits)
   newTranslate = Math.max(-260, Math.min(0, newTranslate));
 
   setTranslateX(newTranslate);
 }}
-
 onTouchEnd={() => {
   if (!isDragging) return;
 
