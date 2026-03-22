@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./styles/ui.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -77,7 +77,7 @@ function MainLayout() {
 
   // 👇 لو مش عندك دول ضيفهم
   const [touchStartX, setTouchStartX] = useState(0);
-
+  const translateRef = useRef(-260);
 
   useEffect(() => {
     const handleResize = () => {
@@ -100,7 +100,7 @@ function MainLayout() {
     minHeight: "100vh",
     overflowX: "hidden",
     position: "relative",
-    touchAction: "pan-y"
+    touchAction: "pan-y pinch-zoom"
   }}
 
   onTouchStart={(e) => {
@@ -120,9 +120,10 @@ function MainLayout() {
  onTouchMove={(e) => {
   if (!isDragging) return;
 
-  e.preventDefault(); // 🔥 أهم سطر (كان ناقصك)
+  const touch = e.touches[0];
+  if (!touch) return;
 
-  const currentX = e.touches[0].clientX;
+  const currentX = touch.clientX;
   const diff = currentX - touchStartX;
 
   let newTranslate;
@@ -135,7 +136,8 @@ function MainLayout() {
 
   newTranslate = Math.max(-260, Math.min(0, newTranslate));
 
-  setTranslateX(newTranslate);
+  translateRef.current = newTranslate;
+setTranslateX(newTranslate);
 }}
 
   // 👇 هنا تحط الكود بتاعك
@@ -144,9 +146,10 @@ function MainLayout() {
 
   setIsDragging(false);
 
+  const current = translateRef.current; // 👈 ده المهم
+
   if (!collapsed) {
-    // 👉 قفل
-    if (translateX < -120) {
+    if (current < -120) {
       setCollapsed(true);
       setTranslateX(-260);
     } else {
@@ -154,8 +157,7 @@ function MainLayout() {
       setTranslateX(0);
     }
   } else {
-    // 👉 فتح
-    if (translateX > -180) {
+    if (current > -180) {
       setCollapsed(false);
       setTranslateX(0);
     } else {
@@ -164,6 +166,10 @@ function MainLayout() {
     }
   }
 }}
+
+onTouchCancel={() => {
+  setIsDragging(false);
+}}
 >
       
       {/* Overlay */}
@@ -171,15 +177,15 @@ function MainLayout() {
   <div
     onClick={() => setCollapsed(true)}
     style={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.6)",
-      backdropFilter: "blur(4px)",
-      zIndex: 9998,
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0,0,0,0.6)",
+  backdropFilter: "blur(4px)",
+  zIndex: 9998,
+  opacity: Math.min(1, (translateX + 260) / 260),
 
-      // 👇 ضيف السطر ده
-      opacity: Math.min(1, (translateX + 260) / 260)
-    }}
+  pointerEvents: isDragging ? "none" : "auto"
+}}
   />
 )}
 
