@@ -12,7 +12,8 @@ function Header({ onToggleSidebar }) {
     <div
       style={{
         height: 50,
-        background: "#2c3e50",
+        background: "linear-gradient(90deg,#0f172a,#1e293b)",
+boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
         color: "#fff",
         display: "flex",
         alignItems: "center",
@@ -23,17 +24,22 @@ function Header({ onToggleSidebar }) {
       {/* ☰ زر السايدبار + اللوجو */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <button
-          onClick={onToggleSidebar}
-          style={{
-            fontSize: 22,
-            background: "transparent",
-            border: "none",
-            color: "#fff",
-            cursor: "pointer"
-          }}
-        >
-          ☰
-        </button>
+  onClick={onToggleSidebar}
+  style={{
+    fontSize: 20,
+    background: "rgba(255,255,255,0.1)",
+    border: "none",
+    color: "#fff",
+    cursor: "pointer",
+    padding: "6px 10px",
+    borderRadius: 6,
+    transition: "0.2s"
+  }}
+  onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
+  onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+>
+  ☰
+</button>
 
         {/* 🖥️ لوجو البرنامج */}
         {appLogo && (
@@ -54,7 +60,8 @@ function Header({ onToggleSidebar }) {
         style={{
           color: "#fff",
           textDecoration: "none",
-          border: "1px solid #fff",
+          background: "rgba(255,255,255,0.1)",
+border: "none",
           padding: "5px 12px",
           borderRadius: 4
         }}
@@ -74,8 +81,9 @@ function Header({ onToggleSidebar }) {
         <button
           onClick={logout}
           style={{
-            background: "transparent",
-            border: "1px solid #fff",
+            background: "rgba(255,255,255,0.1)",
+border: "none",
+borderRadius: 6,
             color: "#fff",
             padding: "5px 10px",
             cursor: "pointer"

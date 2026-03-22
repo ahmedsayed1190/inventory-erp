@@ -67,51 +67,53 @@ import GlobalSearchPage from "./modules/globalSearch/GlobalSearchPage";
 /* ======================= */
 /* ===== Main Layout ===== */
 /* ======================= */
-
 function MainLayout() {
-
-  const [showSidebar, setShowSidebar] = useState(window.innerWidth > 768);
+  const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
-
     const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
 
-      if (window.innerWidth > 768) {
-        setShowSidebar(true);
-      }
-
+      if (mobile) setCollapsed(true);
     };
 
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
-
-  }, [])
-  
+  }, []);
 
   return (
-    <div
-  style={{
-    display: "flex",
-    minHeight: "100vh",
-    background: "radial-gradient(circle at top,#3b1f0f,#0f172a)",
-    color: "white"
-  }}
->
-      {showSidebar && (
-        <Sidebar onClose={() => setShowSidebar(false)} />
+    <div style={{ background: "#0f172a", minHeight: "100vh" }}>
+      
+      {/* Overlay */}
+      {isMobile && !collapsed && (
+        <div
+          onClick={() => setCollapsed(true)}
+          style={{
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.5)",
+            zIndex: 9998
+          }}
+        />
       )}
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Header onToggleSidebar={() => setShowSidebar((s) => !s)} />
+      {/* Sidebar */}
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
-        <div
-  style={{
-    flex: 1,
-    padding: 20,
-    animation: "fadeIn 0.3s ease"
-  }}
->
+      {/* Content */}
+      <div
+        style={{
+          marginLeft: isMobile ? 0 : (collapsed ? 80 : 260),
+          marginTop: 50,
+          transition: "all 0.3s ease"
+        }}
+      >
+        <Header onToggleSidebar={() => setCollapsed(!collapsed)} />
+
+        <div style={{ padding: 20 }}>
           <Routes>
 
             {/* ===== Dashboard ===== */}
@@ -126,9 +128,13 @@ function MainLayout() {
             <Route path="/customers" element={<Customers />} />
             <Route path="/expenses" element={<Expenses />} />
             <Route path="/revenues" element={<Revenues />} />
+
+            {/* ===== Lists ===== */}
             <Route path="/lists/customers" element={<CustomersList />} />
             <Route path="/lists/items" element={<ItemsList />} />
             <Route path="/lists/suppliers" element={<SuppliersList />} />
+            <Route path="/lists/expenses" element={<ExpensesList />} />
+            <Route path="/lists/revenues" element={<RevenuesList />} />
 
             {/* ===== Inventory ===== */}
             <Route path="/stock-entry" element={<StockEntry />} />
@@ -148,12 +154,11 @@ function MainLayout() {
             <Route path="/sales-return" element={<SalesReturn />} />
             <Route path="/customer-ledger" element={<CustomerLedger />} />
             <Route path="/customer-total-balances" element={<CustomerTotalBalances />} />
-            {/* ===== Expenses ===== */}
-            <Route path="/lists/expenses" element={<ExpensesList />} />
-            <Route path="/lists/revenues" element={<RevenuesList />} />
+
             {/* ===== Cash ===== */}
             <Route path="/add-cash-transaction" element={<AddCashTransaction />} />
             <Route path="/lists/cash" element={<CashList />} />
+
             {/* ===== Reports ===== */}
             <Route path="/item-movement-report" element={<ItemMovementReport />} />
             <Route path="/stock-report" element={<StockReport />} />
@@ -173,7 +178,6 @@ function MainLayout() {
     </div>
   );
 }
-
 /* ======================= */
 /* ========= APP ========= */
 /* ======================= */

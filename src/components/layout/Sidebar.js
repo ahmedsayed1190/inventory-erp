@@ -2,19 +2,16 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-function Sidebar() {
+function Sidebar({ collapsed, setCollapsed }) {
   const { t } = useTranslation();
 const [openSection, setOpenSection] = useState(null);
-const [collapsed, setCollapsed] = useState(false);
 const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 useEffect(() => {
   const handleResize = () => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
 
-    if (mobile) {
-      setCollapsed(true); // يبدأ مقفول في الموبايل
-    }
+  
   };
 
   window.addEventListener("resize", handleResize);
@@ -76,27 +73,7 @@ return (
         }}
       />
     )}
-         <div style={{ marginBottom: 15 }}>
-<button
-  onClick={() => setCollapsed(!collapsed)}
-  style={{
-    position: "fixed",
-    top: 15,
-    left: 15,
-    zIndex: 10000,
-    background: "#0f172a",
-    border: "none",
-    color: "#fff",
-    fontSize: 18,
-    cursor: "pointer",
-    padding: "8px 10px",
-    borderRadius: 6,
-    boxShadow: "0 2px 10px rgba(0,0,0,0.3)"
-  }}
->
-  ☰
-</button>
-</div>
+      
 
     {/* Sidebar */}
    <div
