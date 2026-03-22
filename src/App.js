@@ -120,12 +120,15 @@ onTouchMove={(e) => {
   let newTranslate;
 
   if (collapsed) {
-    // بيفتح
-    newTranslate = Math.min(0, -260 + diff);
+    // 👉 فتح (من -260 لحد 0)
+    newTranslate = -260 + diff;
   } else {
-    // بيقفل
-    newTranslate = Math.min(0, diff);
+    // 👉 قفل (من 0 لحد -260)
+    newTranslate = diff;
   }
+
+  // 👇 أهم سطر (يمنع الخروج بره الحدود)
+  newTranslate = Math.max(-260, Math.min(0, newTranslate));
 
   setTranslateX(newTranslate);
 }}
@@ -135,7 +138,7 @@ onTouchEnd={() => {
 
   setIsDragging(false);
 
-  // قرار فتح أو قفل
+  // 👇 لو أكتر من نص → افتح
   if (translateX > -130) {
     setCollapsed(false);
     setTranslateX(0);
