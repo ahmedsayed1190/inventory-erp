@@ -23,20 +23,15 @@ boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
     >
       {/* ☰ زر السايدبار + اللوجو */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <button
+     <button
   onClick={onToggleSidebar}
   style={{
     fontSize: 20,
-    background: "rgba(255,255,255,0.1)",
+    background: "transparent",
     border: "none",
     color: "#fff",
-    cursor: "pointer",
-    padding: "6px 10px",
-    borderRadius: 6,
-    transition: "0.2s"
+    cursor: "pointer"
   }}
-  onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
-  onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
 >
   ☰
 </button>

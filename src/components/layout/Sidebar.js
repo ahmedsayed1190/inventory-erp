@@ -95,28 +95,7 @@ boxShadow: isActive
 };
 return (
   <>
-  <div style={{ marginBottom: 15 }}>
-  <button
-    onClick={() => setCollapsed(!collapsed)}
-    style={{
-      position: "fixed",
-      top: 15,
-      left: 15,
-      zIndex: 10000,
-      background: "rgba(15,23,42,0.7)",
-      backdropFilter: "blur(10px)",
-      border: "1px solid rgba(255,255,255,0.1)",
-      color: "#fff",
-      fontSize: 18,
-      cursor: "pointer",
-      padding: "8px 10px",
-      borderRadius: 8,
-      transition: "0.25s"
-    }}
-  >
-    ☰
-  </button>
-</div>
+ 
     {/* Overlay */}
     {isMobile && !collapsed && (
       <div
@@ -136,28 +115,27 @@ return (
 
     {/* Sidebar */}
    <div
-  style={{
-    width: isMobile ? 260 : (collapsed ? 80 : 260),
+style={{
+  width: isMobile ? 260 : (collapsed ? 80 : 260),
 
-    position: "fixed",
-    left: 0,
-    top: 0,
-    zIndex: 9999,
+  position: "fixed",
+  left: 0,
+  top: 0,
+  zIndex: 9999,
 
-    transform: isMobile
-  ? (collapsed ? "translateX(-100%)" : "translateX(0)")
-  : "translateX(0)",
+  transform: collapsed ? "translateX(-100%)" : "translateX(0)",
 
-transition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
-    background: "rgba(15,23,42,0.75)",
-backdropFilter: "blur(12px)",
-borderRight: "1px solid rgba(255,255,255,0.08)",
-    color: "#e2e8f0",
-    padding: 18,
-    height: "100vh",
-    overflowY: "auto",
-    boxShadow: "4px 0 15px rgba(0,0,0,0.3)",
-  }}
+  // ✅ نسخة واحدة بس
+  background: "rgba(15,23,42,0.85)",
+  backdropFilter: "blur(14px)",
+  borderRight: "1px solid rgba(255,255,255,0.08)",
+
+  color: "#e2e8f0",
+  padding: 18,
+  height: "100vh",
+  overflowY: "auto",
+  boxShadow: "4px 0 15px rgba(0,0,0,0.3)",
+}}
 >
 
       {/* ================= Dashboard ================= */}

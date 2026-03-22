@@ -68,7 +68,7 @@ import GlobalSearchPage from "./modules/globalSearch/GlobalSearchPage";
 /* ===== Main Layout ===== */
 /* ======================= */
 function MainLayout() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -76,9 +76,11 @@ function MainLayout() {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
 
-      if (mobile) setCollapsed(true);
+      if (!mobile) setCollapsed(false);
+      else setCollapsed(true);
     };
 
+    handleResize(); // مهم
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -88,29 +90,28 @@ function MainLayout() {
       
       {/* Overlay */}
       {isMobile && !collapsed && (
-        <div
-          onClick={() => setCollapsed(true)}
-          style={{
-            position: "fixed",
-            width: "100%",
-            height: "100%",
-            background: "rgba(0,0,0,0.5)",
-            zIndex: 9998
-          }}
-        />
-      )}
+  <div
+    onClick={() => setCollapsed(true)}
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.6)",
+      backdropFilter: "blur(4px)",
+      zIndex: 9998
+    }}
+  />
+)}
 
       {/* Sidebar */}
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
 
       {/* Content */}
-      <div
-        style={{
-          marginLeft: isMobile ? 0 : (collapsed ? 80 : 260),
-          marginTop: 50,
-          transition: "all 0.3s ease"
-        }}
-      >
+     <div
+  style={{
+    marginLeft: isMobile ? 0 : 260,
+    transition: "0.3s"
+  }}
+>
         <Header onToggleSidebar={() => setCollapsed(!collapsed)} />
 
         <div style={{ padding: 20 }}>
