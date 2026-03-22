@@ -76,7 +76,7 @@ function MainLayout() {
   const [isDragging, setIsDragging] = useState(false);
 
   // 👇 لو مش عندك دول ضيفهم
-  const [touchStartX, setTouchStartX] = useState(0);
+  const touchStartRef = useRef(0);
   const translateRef = useRef(-260);
 
   useEffect(() => {
@@ -107,7 +107,7 @@ function MainLayout() {
   const x = e.touches[0].clientX;
 
   // 👇 reset البداية كل مرة
-  setTouchStartX(x);
+  touchStartRef.current = x;
 
   if (collapsed && x < 25) {
     setIsDragging(true);
@@ -119,13 +119,15 @@ function MainLayout() {
 }}
 
  onTouchMove={(e) => {
-  if (!isDragging) return;
+ if (!isDragging) return;
 
+// 👇 مهم جدًا
+e.preventDefault();
   const touch = e.touches[0];
   if (!touch) return;
 
   const currentX = touch.clientX;
-  const diff = currentX - (touchStartX || currentX);
+  const diff = currentX - touchStartRef.current;
 
   let newTranslate;
 
@@ -172,11 +174,11 @@ setTranslateX(newTranslate);
   }
 
   // 👇 reset كامل
-  setTouchStartX(0);
+  touchStartRef.current = 0;
 }}
 onTouchCancel={() => {
   setIsDragging(false);
-  setTouchStartX(0);
+  touchStartRef.current = 0;
 }}
 >
       
