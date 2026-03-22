@@ -23,13 +23,13 @@ useEffect(() => {
 
   const linkStyle = ({ isActive }) => ({
     display: "block",
-    padding: "10px 16px",
+    padding: collapsed ? "8px 10px" : "10px 16px",
     textDecoration: "none",
     color: isActive ? "#22d3ee" : "#cbd5e1",
     background: isActive ? "rgba(34,211,238,0.12)" : "transparent",
     borderRadius: 8,
     marginBottom: 4,
-    fontSize: 13,
+    fontSize: collapsed ? 12 : 13,
     transition: "all 0.25s ease",
 transform: isActive ? "translateX(6px)" : "translateX(0)",
   });
@@ -43,7 +43,7 @@ transform: isActive ? "translateX(6px)" : "translateX(0)",
     cursor: "pointer",
     display: "flex",
 alignItems: "center",
-justifyContent: collapsed ? "center" : "flex-start",
+justifyContent: "flex-start",
 gap: 10,
     padding: "10px 12px",
     borderRadius: 10
@@ -78,14 +78,16 @@ return (
     {/* Sidebar */}
    <div
   style={{
-    width: isMobile ? 260 : (collapsed ? 80 : 260),
+    width: isMobile ? 260 : (collapsed ? 200 : 260),
 
     position: "fixed",
     left: 0,
     top: 0,
     zIndex: 9999,
 
-    transform: collapsed ? "translateX(-100%)" : "translateX(0)",
+    transform: isMobile
+  ? (collapsed ? "translateX(-100%)" : "translateX(0)")
+  : "translateX(0)",
 
     transition: "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
 
@@ -100,7 +102,7 @@ return (
 
       {/* ================= Dashboard ================= */}
 <NavLink to="/dashboard" style={linkStyle}>
-📊 {!collapsed && t("sidebar.dashboard")}</NavLink>
+📊 {t("sidebar.dashboard")}</NavLink>
 
       {/* ================= التعريفات ================= */}
       <div style={sectionTitle} onClick={() => toggleSection("definitions")}>
