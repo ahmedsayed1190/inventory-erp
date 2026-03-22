@@ -94,12 +94,14 @@ function MainLayout() {
   }, []);
 
   return (
-    <div
+  <div
   style={{
     background: "#0f172a",
     minHeight: "100vh",
-    overflowX: "hidden" // 🔥 يمنع الفلاش
+    overflowX: "hidden", // 🔥 يمنع الشاشة البيضا
+    position: "relative"
   }}
+
 
   onTouchStart={(e) => {
   const x = e.touches[0].clientX;
@@ -150,7 +152,7 @@ onTouchEnd={() => {
 >
       
       {/* Overlay */}
-      {isMobile && !collapsed && (
+     {isMobile && !collapsed && (
   <div
     onClick={() => setCollapsed(true)}
     style={{
@@ -158,7 +160,10 @@ onTouchEnd={() => {
       inset: 0,
       background: "rgba(0,0,0,0.6)",
       backdropFilter: "blur(4px)",
-      zIndex: 9998
+      zIndex: 9998,
+
+      // 👇 ضيف السطر ده
+      opacity: Math.min(1, (translateX + 260) / 260)
     }}
   />
 )}
@@ -174,7 +179,17 @@ onTouchEnd={() => {
       {/* Content */}
     <div
   style={{
-    marginLeft: isMobile ? 0 : (collapsed ? 0 : 260),
+    marginLeft: isMobile
+  ? 0
+  : (collapsed ? 0 : 260),
+
+transform: isMobile
+  ? `translateX(${Math.max(0, translateX + 260)}px)`
+  : "none",
+
+transition: isDragging
+  ? "none"
+  : "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
     ttransition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
   }}
 >
