@@ -70,8 +70,14 @@ import GlobalSearchPage from "./modules/globalSearch/GlobalSearchPage";
 function MainLayout() {
   const [collapsed, setCollapsed] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // 👇 ضيف دول هنا
+  const [translateX, setTranslateX] = useState(-260);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // 👇 لو مش عندك دول ضيفهم
   const [touchStartX, setTouchStartX] = useState(0);
-const [touchEndX, setTouchEndX] = useState(0);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -89,29 +95,55 @@ const [touchEndX, setTouchEndX] = useState(0);
 
   return (
     <div
-  style={{ background: "#0f172a", minHeight: "100vh" }}
+  style={{
+    background: "#0f172a",
+    minHeight: "100vh",
+    overflowX: "hidden" // 🔥 يمنع الفلاش
+  }}
 
   onTouchStart={(e) => {
-    setTouchStartX(e.touches[0].clientX);
-  }}
+  const x = e.touches[0].clientX;
 
-  onTouchMove={(e) => {
-    setTouchEndX(e.touches[0].clientX);
-  }}
+  // يبدأ سحب بس من الحافة أو لو مفتوح
+  if (x < 40 || !collapsed) {
+    setIsDragging(true);
+    setTouchStartX(x);
+  }
+}}
 
-  onTouchEnd={() => {
-    const diff = touchEndX - touchStartX;
+onTouchMove={(e) => {
+  if (!isDragging) return;
 
-    // 👉 فتح من الشمال
-    if (diff > 70 && touchStartX < 50 && isMobile) {
-      setCollapsed(false);
-    }
+  const currentX = e.touches[0].clientX;
+  const diff = currentX - touchStartX;
 
-    // 👉 قفل
-    if (diff < -70 && isMobile) {
-      setCollapsed(true);
-    }
-  }}
+  let newTranslate;
+
+  if (collapsed) {
+    // بيفتح
+    newTranslate = Math.min(0, -260 + diff);
+  } else {
+    // بيقفل
+    newTranslate = Math.min(0, diff);
+  }
+
+  setTranslateX(newTranslate);
+}}
+
+onTouchEnd={() => {
+  if (!isDragging) return;
+
+  setIsDragging(false);
+
+  // قرار فتح أو قفل
+  if (translateX > -130) {
+    setCollapsed(false);
+    setTranslateX(0);
+  } else {
+    setCollapsed(true);
+    setTranslateX(-260);
+  }
+}}
 >
       
       {/* Overlay */}
@@ -129,7 +161,12 @@ const [touchEndX, setTouchEndX] = useState(0);
 )}
 
       {/* Sidebar */}
-      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+      <Sidebar
+  collapsed={collapsed}
+  setCollapsed={setCollapsed}
+  translateX={translateX}
+  isDragging={isDragging}
+/>
 
       {/* Content */}
     <div

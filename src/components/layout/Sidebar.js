@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-function Sidebar({ collapsed, setCollapsed }) {
+function Sidebar({ collapsed, setCollapsed, translateX, isDragging }) {
   const { t } = useTranslation();
 const [openSection, setOpenSection] = useState(null);
 const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -106,7 +106,7 @@ return (
           left: 0,
           width: "100%",
           height: "100%",
-          background: "rgba(0,0,0,0.5)",
+          background: "rgba(0,0,0,0.4)",
           zIndex: 9998
         }}
       />
@@ -117,15 +117,20 @@ return (
    <div
 style={{
   width: isMobile ? 260 : (collapsed ? 80 : 260),
-
   position: "fixed",
   left: 0,
   top: 0,
   zIndex: 9999,
 
-  transform: collapsed ? "translateX(-100%)" : "translateX(0)",
+  transform: isMobile
+  ? `translateX(${translateX}px)`
+  : "translateX(0)",
 
-  // ✅ نسخة واحدة بس
+  transition: isDragging
+  ? "none"
+  : "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+  willChange: "transform", // 🔥 مهم جدا
+
   background: "rgba(15,23,42,0.85)",
   backdropFilter: "blur(14px)",
   borderRight: "1px solid rgba(255,255,255,0.08)",
@@ -134,7 +139,6 @@ style={{
   padding: 18,
   height: "100vh",
   overflowY: "auto",
-  boxShadow: "4px 0 15px rgba(0,0,0,0.3)",
 }}
 >
 
