@@ -106,13 +106,18 @@ function MainLayout() {
   onTouchStart={(e) => {
   const x = e.touches[0].clientX;
 
-  // يبدأ سحب بس من الحافة أو لو مفتوح
-  if (x < 40 || !collapsed) {
+  // 👉 فتح من الحافة فقط
+  if (collapsed && x < 30) {
+    setIsDragging(true);
+    setTouchStartX(x);
+  }
+
+  // 👉 قفل من أي مكان داخل الشاشة
+  if (!collapsed) {
     setIsDragging(true);
     setTouchStartX(x);
   }
 }}
-
 onTouchMove={(e) => {
   if (!isDragging) return;
 
@@ -122,14 +127,14 @@ onTouchMove={(e) => {
   let newTranslate;
 
   if (collapsed) {
-    // 👉 فتح (من -260 لحد 0)
+    // 👉 فتح
     newTranslate = -260 + diff;
   } else {
-    // 👉 قفل (من 0 لحد -260)
+    // 👉 قفل (نبدأ من 0 ونمشي سالب)
     newTranslate = diff;
   }
 
-  // 👇 أهم سطر (يمنع الخروج بره الحدود)
+  // 👇 أهم حاجة (limits)
   newTranslate = Math.max(-260, Math.min(0, newTranslate));
 
   setTranslateX(newTranslate);
