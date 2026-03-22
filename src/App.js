@@ -104,18 +104,19 @@ function MainLayout() {
   }}
 
   onTouchStart={(e) => {
-    const x = e.touches[0].clientX;
+  const x = e.touches[0].clientX;
 
-    if (collapsed && x < 25) {
-      setIsDragging(true);
-      setTouchStartX(x);
-    }
+  // 👇 reset البداية كل مرة
+  setTouchStartX(x);
 
-    if (!collapsed) {
-      setIsDragging(true);
-      setTouchStartX(x);
-    }
-  }}
+  if (collapsed && x < 25) {
+    setIsDragging(true);
+  }
+
+  if (!collapsed) {
+    setIsDragging(true);
+  }
+}}
 
  onTouchMove={(e) => {
   if (!isDragging) return;
@@ -124,7 +125,7 @@ function MainLayout() {
   if (!touch) return;
 
   const currentX = touch.clientX;
-  const diff = currentX - touchStartX;
+  const diff = currentX - (touchStartX || currentX);
 
   let newTranslate;
 
@@ -146,29 +147,36 @@ setTranslateX(newTranslate);
 
   setIsDragging(false);
 
-  const current = translateRef.current; // 👈 ده المهم
+  const current = translateRef.current;
 
   if (!collapsed) {
     if (current < -120) {
       setCollapsed(true);
       setTranslateX(-260);
+      translateRef.current = -260; // 👈 مهم
     } else {
       setCollapsed(false);
       setTranslateX(0);
+      translateRef.current = 0; // 👈 مهم
     }
   } else {
     if (current > -180) {
       setCollapsed(false);
       setTranslateX(0);
+      translateRef.current = 0; // 👈 مهم
     } else {
       setCollapsed(true);
       setTranslateX(-260);
+      translateRef.current = -260; // 👈 مهم
     }
   }
-}}
 
+  // 👇 reset كامل
+  setTouchStartX(0);
+}}
 onTouchCancel={() => {
   setIsDragging(false);
+  setTouchStartX(0);
 }}
 >
       
