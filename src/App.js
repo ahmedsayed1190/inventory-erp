@@ -103,17 +103,13 @@ function MainLayout() {
     touchAction: "pan-y pinch-zoom"
   }}
 
-  onTouchStart={(e) => {
+ onTouchStart={(e) => {
   const x = e.touches[0].clientX;
 
-  // 👇 reset البداية كل مرة
   touchStartRef.current = x;
 
-  if (collapsed && x < 25) {
-    setIsDragging(true);
-  }
-
-  if (!collapsed) {
+  // 👇 ابدأ drag بس من الحافة أو لو مفتوح
+  if (x < 25 || translateRef.current > -260) {
     setIsDragging(true);
   }
 }}
@@ -144,36 +140,26 @@ setTranslateX(newTranslate);
 }}
 
   // 👇 هنا تحط الكود بتاعك
- onTouchEnd={() => {
+onTouchEnd={() => {
   if (!isDragging) return;
 
   setIsDragging(false);
 
   const current = translateRef.current;
 
-  if (!collapsed) {
-    if (current < -120) {
-      setCollapsed(true);
-      setTranslateX(-260);
-      translateRef.current = -260; // 👈 مهم
-    } else {
-      setCollapsed(false);
-      setTranslateX(0);
-      translateRef.current = 0; // 👈 مهم
-    }
+  // 👇 القرار يعتمد على المكان مش collapsed
+  if (current > -130) {
+    // 👉 افتح
+    setCollapsed(false);
+    setTranslateX(0);
+    translateRef.current = 0;
   } else {
-    if (current > -180) {
-      setCollapsed(false);
-      setTranslateX(0);
-      translateRef.current = 0; // 👈 مهم
-    } else {
-      setCollapsed(true);
-      setTranslateX(-260);
-      translateRef.current = -260; // 👈 مهم
-    }
+    // 👉 اقفل
+    setCollapsed(true);
+    setTranslateX(-260);
+    translateRef.current = -260;
   }
 
-  // 👇 reset كامل
   touchStartRef.current = 0;
 }}
 onTouchCancel={() => {
