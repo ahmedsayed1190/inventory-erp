@@ -5,20 +5,24 @@ import usePermission from "../hooks/usePermission";
 function PrivateRoute({ children, module }) {
   const { user } = useAuth();
 
-  // ننادي الهوك دايمًا
   const { canView } = usePermission(module || "__public__");
 
-  // مش مسجل دخول
+  // ⏳ استنى لحد ما user يتحمل
+  if (user === null) {
+    return <div>Loading...</div>;
+  }
+
+  // ❌ مش مسجل دخول
   if (!user) {
     return <Navigate to="/login" />;
   }
 
-  // لو صفحة عامة بعد تسجيل الدخول
+  // صفحات عامة
   if (!module) {
     return children;
   }
 
-  // فحص الصلاحية
+  // ❌ مفيش صلاحية
   if (!canView) {
     return (
       <div className="alert alert-danger">

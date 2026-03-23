@@ -1,9 +1,10 @@
 import { useAuth } from "../context/AuthContext";
 
 function usePermission(moduleName) {
-  const auth = useAuth();
+  const { user } = useAuth();
 
-  if (!auth || !auth.user) {
+  // ❌ مش مسجل دخول
+  if (!user) {
     return {
       canView: false,
       canAdd: false,
@@ -12,9 +13,7 @@ function usePermission(moduleName) {
     };
   }
 
-  const { user } = auth;
-
-  // Admin → كل الصلاحيات
+  // ✅ Admin → كل الصلاحيات
   if (user.isAdmin) {
     return {
       canView: true,
@@ -24,13 +23,8 @@ function usePermission(moduleName) {
     };
   }
 
-  // تأمين ضد أي شكل داتا غلط
-  const permissions =
-    user.permissions ||
-    JSON.parse(localStorage.getItem("permissions")) ||
-    {};
-
-  const modulePermissions = permissions[moduleName] || {};
+  // ✅ صلاحيات المستخدم
+  const modulePermissions = user.permissions?.[moduleName] || {};
 
   return {
     canView: !!modulePermissions.view,

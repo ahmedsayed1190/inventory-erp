@@ -1,16 +1,29 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
+
+  const [user, setUser] = useState(null);
+
+useEffect(() => {
+  const saved = localStorage.getItem("currentUser");
+  if (saved) {
+    setUser(JSON.parse(saved));
+  }
+}, []);
+
+  // ✅ مهم جدًا (ده كان ناقص عندك)
+  useEffect(() => {
     const saved = localStorage.getItem("currentUser");
-    return saved ? JSON.parse(saved) : null;
-  });
+    if (saved) {
+      setUser(JSON.parse(saved));
+    }
+  }, []);
 
   /* ===== Login ===== */
   const login = (username, password) => {
-    // Admin ثابت
+
     if (username === "admin" && password === "123") {
       const adminUser = {
         id: 0,
@@ -19,14 +32,10 @@ export function AuthProvider({ children }) {
       };
 
       setUser(adminUser);
-      localStorage.setItem(
-        "currentUser",
-        JSON.stringify(adminUser)
-      );
+      localStorage.setItem("currentUser", JSON.stringify(adminUser));
       return true;
     }
 
-    // Users من localStorage
     const users =
       JSON.parse(localStorage.getItem("users")) || [];
 
@@ -46,10 +55,7 @@ export function AuthProvider({ children }) {
     };
 
     setUser(normalUser);
-    localStorage.setItem(
-      "currentUser",
-      JSON.stringify(normalUser)
-    );
+    localStorage.setItem("currentUser", JSON.stringify(normalUser));
 
     return true;
   };
@@ -61,9 +67,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
