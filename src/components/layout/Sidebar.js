@@ -58,25 +58,6 @@ useEffect(() => {
 return (
   <>
  
-    {/* Overlay */}
-    
-   {isMobile && !collapsed && (
-  <div
-    onClick={() => {
-      setCollapsed(true);
-
-      setTimeout(() => {
-        // هنا تقدر تعمل reset لو حابب
-      }, 300);
-    }}
-    style={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.5)",
-      zIndex: 9998,
-    }}
-  />
-)}
 
     {/* Sidebar */}
    <div
@@ -95,8 +76,9 @@ return (
   transition: isDragging
   ? "none"
   : "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
-  willChange: "transform", // 🔥 مهم جدا
-
+  willChange: "transform",
+backfaceVisibility: "hidden",
+transformStyle: "preserve-3d",
   background: "rgba(15,23,42,0.85)",
   backdropFilter: "blur(14px)",
   borderRight: "1px solid rgba(255,255,255,0.08)",
