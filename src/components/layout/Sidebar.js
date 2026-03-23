@@ -70,7 +70,7 @@ return (
   zIndex: 9999,
 
   transform: isMobile
-  ? `translateX(${translateX}px)`
+  ? `translateX(${Math.max(-260, Math.min(0, translateX))}px)`
   : "translateX(0)",
 
   transition: isDragging

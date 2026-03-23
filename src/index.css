@@ -85,15 +85,12 @@ html, body {
   overscroll-behavior: none;
 }
 
-/* التحكم في السحب */
-#root {
-  touch-action: pan-y;
-}
-body {
-  overflow-x: hidden;
-  position: relative;
-}
 html, body, #root {
   background: #0f172a;
   overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+#root {
+  touch-action: none;
 }
