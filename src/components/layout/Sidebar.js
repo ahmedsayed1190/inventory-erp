@@ -79,6 +79,7 @@ return (
   willChange: "transform",
 backfaceVisibility: "hidden",
 transformStyle: "preserve-3d",
+contain: "layout paint size",
   background: "rgba(15,23,42,0.85)",
   backdropFilter: "blur(14px)",
   borderRight: "1px solid rgba(255,255,255,0.08)",

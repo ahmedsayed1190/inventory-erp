@@ -101,7 +101,7 @@
       minHeight: "100vh",
       overflowX: "hidden",
       position: "relative",
-      touchAction: "pan-y pinch-zoom"
+      touchAction: "pan-y"
     }}
 
   onTouchStart={(e) => {
@@ -110,7 +110,7 @@
     touchStartRef.current = x;
 
     // 👇 ابدأ drag بس من الحافة أو لو مفتوح
-    if (x < 25 || translateRef.current > -260) {
+    if (x < 60 || translateRef.current > -260) {
       setIsDragging(true);
     }
   }}
@@ -119,7 +119,6 @@
   if (!isDragging) return;
 
   // 👇 مهم جدًا
-  e.preventDefault();
     const touch = e.touches[0];
     if (!touch) return;
 
