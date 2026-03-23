@@ -102,19 +102,18 @@
       minHeight: "100vh",
       overflowX: "hidden",
       position: "relative",
-      touchAction: "none"
     }}
 
  onTouchStart={(e) => {
   const touch = e.touches[0];
 
   touchStartRef.current = touch.clientX;
-  startYRef.current = touch.clientY; // 👈 مهم
-    setIsDragging(true);
-  
+  startYRef.current = touch.clientY;
+
+  setIsDragging(false);
 }}
 
- onTouchMove={(e) => {
+onTouchMove={(e) => {
   const touch = e.touches[0];
   if (!touch) return;
 
@@ -124,14 +123,19 @@
   const diffX = currentX - touchStartRef.current;
   const diffY = currentY - startYRef.current;
 
-  // 👇 نحدد هل الحركة أفقية ولا رأسية
-  const isHorizontal = Math.abs(diffX) > Math.abs(diffY);
+  // 👇 لسه محددناش نوع الحركة
+  if (!isDragging) {
+    // 👇 لو الحركة رأسية → سيبها ومتكملش
+    if (Math.abs(diffY) > Math.abs(diffX)) {
+      return;
+    }
 
-  // 👇 لو مش أفقي → سيب السكرول شغال
-  if (!isHorizontal) return;
+    // 👇 لو أفقية → ابدأ drag
+    setIsDragging(true);
+  }
 
-  // 👇 هنا نبدأ drag بقى
-  setIsDragging(true);
+  // 👇 لو مش dragging خلاص
+  if (!isDragging && Math.abs(diffX) < 10) return;
 
   let newTranslate;
 
@@ -146,7 +150,7 @@
   translateRef.current = newTranslate;
   setTranslateX(newTranslate);
 
-  // 👇 مهم جدًا يمنع الشاشة البيضا
+  // 👇 يمنع الشاشة البيضا بس لما يكون أفقي
   e.preventDefault();
 }}
 
