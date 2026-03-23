@@ -93,6 +93,21 @@
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }, []);
+    useEffect(() => {
+  const preventScroll = (e) => {
+    if (isDragging) {
+      e.preventDefault();
+    }
+  };
+
+  document.addEventListener("touchmove", preventScroll, {
+    passive: false,
+  });
+
+  return () => {
+    document.removeEventListener("touchmove", preventScroll);
+  };
+}, [isDragging]);
 
     return (
     <div
@@ -110,34 +125,35 @@
     touchStartRef.current = x;
 
     // 👇 ابدأ drag بس من الحافة أو لو مفتوح
-    if (x < 30 || translateRef.current > -260) {
+    if (x < 20 || translateRef.current > -260) {
       setIsDragging(true);
     }
   }}
 
-  onTouchMove={(e) => {
+ onTouchMove={(e) => {
   if (!isDragging) return;
 
-  // 👇 مهم جدًا
-    const touch = e.touches[0];
-    if (!touch) return;
+  e.preventDefault(); // ✅ ضيف السطر ده
 
-    const currentX = touch.clientX;
-    const diff = currentX - touchStartRef.current;
+  const touch = e.touches[0];
+  if (!touch) return;
 
-    let newTranslate;
+  const currentX = touch.clientX;
+  const diff = currentX - touchStartRef.current;
 
-    if (collapsed) {
-      newTranslate = -260 + diff;
-    } else {
-      newTranslate = diff;
-    }
+  let newTranslate;
 
-    newTranslate = Math.max(-260, Math.min(0, newTranslate));
+  if (collapsed) {
+    newTranslate = -260 + diff;
+  } else {
+    newTranslate = diff;
+  }
 
-    translateRef.current = newTranslate;
+  newTranslate = Math.max(-260, Math.min(0, newTranslate));
+
+  translateRef.current = newTranslate;
   setTranslateX(newTranslate);
-  }}
+}}
 
     // 👇 هنا تحط الكود بتاعك
   onTouchEnd={() => {
