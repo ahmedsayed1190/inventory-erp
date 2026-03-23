@@ -62,15 +62,18 @@ return (
     
    {isMobile && !collapsed && (
   <div
-    onClick={() => setCollapsed(true)}
+    onClick={() => {
+      setCollapsed(true);
+
+      setTimeout(() => {
+        // هنا تقدر تعمل reset لو حابب
+      }, 300);
+    }}
     style={{
       position: "fixed",
       inset: 0,
-      background: "rgba(0,0,0,0.6)",
-      backdropFilter: "blur(4px)",
+      background: "rgba(0,0,0,0.5)",
       zIndex: 9998,
-      opacity: Math.min(1, (translateX + 260) / 260),
-      pointerEvents: isDragging ? "none" : "auto"
     }}
   />
 )}
