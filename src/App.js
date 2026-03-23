@@ -206,9 +206,7 @@
         ? 0
         : (collapsed ? 0 : 260),
 
-      transform: isMobile
-  ? `translateX(${collapsed ? 0 : translateX + 260}px)`
-  : "none",
+      transform: "none",
       transition: isDragging
         ? "none"
         : "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
