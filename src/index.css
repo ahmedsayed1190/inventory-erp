@@ -78,3 +78,18 @@ transition: all 0.25s ease;
 transform: translateY(-5px);
 box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
+/* ===== FIX iPhone swipe bug ===== */
+
+html, body {
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+/* التحكم في السحب */
+#root {
+  touch-action: pan-y;
+}
+body {
+  overflow-x: hidden;
+  position: relative;
+}
