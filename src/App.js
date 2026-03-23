@@ -80,6 +80,7 @@
     // 👇 لو مش عندك دول ضيفهم
     const touchStartRef = useRef(0);
     const translateRef = useRef(-260);
+    const startYRef = useRef(0);
 
     useEffect(() => {
       const handleResize = () => {
@@ -95,7 +96,16 @@
     }, []);
     useEffect(() => {
   const preventScroll = (e) => {
-    if (isDragging) {
+    if (!isDragging) return;
+
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    const diffX = Math.abs(touch.clientX - touchStartRef.current);
+    const diffY = Math.abs(touch.clientY - startYRef.current);
+
+    // 👇 امنع بس لو السحب أفقي
+    if (diffX > diffY) {
       e.preventDefault();
     }
   };
@@ -119,16 +129,16 @@
       touchAction: "none"
     }}
 
-  onTouchStart={(e) => {
-    const x = e.touches[0].clientX;
+ onTouchStart={(e) => {
+  const touch = e.touches[0];
 
-    touchStartRef.current = x;
+  touchStartRef.current = touch.clientX;
+  startYRef.current = touch.clientY; // 👈 مهم
 
-    // 👇 ابدأ drag بس من الحافة أو لو مفتوح
-    if (x < 20 || translateRef.current > -260) {
-      setIsDragging(true);
-    }
-  }}
+  if (touch.clientX < 60 || translateRef.current > -260) {
+    setIsDragging(true);
+  }
+}}
 
  onTouchMove={(e) => {
   if (!isDragging) return;
