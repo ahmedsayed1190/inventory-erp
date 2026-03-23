@@ -24,7 +24,10 @@ useEffect(() => {
   /* ===== Login ===== */
   const login = (username, password) => {
 
-    if (username === "admin" && password === "123") {
+    if (
+  username.toLowerCase() === "admin" &&
+  password === "123"
+) {
       const adminUser = {
         id: 0,
         username: "admin",
