@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import FinancialSummary from "./FinancialSummary";
-
+import { useNavigate } from "react-router-dom";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,7 +15,6 @@ import { Bar } from "react-chartjs-2";
 /* 👇 خلي الأيقونات هنا */
 import {
   DollarSign,
-  TrendingUp,
   BarChart3,
   AlertTriangle,
   Wallet,
@@ -34,7 +32,7 @@ ChartJS.register(
   Legend
 );
 function Dashboard() {
-
+const navigate = useNavigate();
 const {
   topCustomer,
   lowStockItems,
@@ -42,7 +40,6 @@ const {
   overdueChequesCount,
   chartData,
   todaySales,
-  todayProfit,
   topItem
 } = useMemo(() => {
 
@@ -161,7 +158,6 @@ totalCash -= Number(t.amount || 0);
   /* ===== مبيعات وربح اليوم ===== */
 
   let todaySales = 0;
-  let todayCost = 0;
 
   invoices
     .filter(inv => inv.date === todayStr)
@@ -171,17 +167,10 @@ totalCash -= Number(t.amount || 0);
 
       inv.items?.forEach(it => {
 
-        const item = items.find(i => i.code === it.code);
-
-        const cost = Number(item?.costPrice || 0);
-
-        todayCost += Number(it.qty || 0) * cost;
-
       });
 
     });
 
-  const todayProfit = todaySales - todayCost;
 
   /* ===== رسم بياني آخر 6 شهور ===== */
 
@@ -208,15 +197,7 @@ totalCash -= Number(t.amount || 0);
 
         monthSales += Number(inv.total || 0);
 
-        inv.items?.forEach(it => {
-
-          const item = items.find(i => i.code === it.code);
-
-          const cost = Number(item?.costPrice || 0);
-
-          monthCost += Number(it.qty || 0) * cost;
-
-        });
+    
 
       });
 
@@ -253,7 +234,6 @@ totalCash -= Number(t.amount || 0);
     overdueChequesCount,
     chartData,
     todaySales,
-    todayProfit,
     topItem
   };
 
@@ -283,7 +263,7 @@ return (
 <div
   className="glass-card text-center fade-in"
   style={{cursor:"pointer"}}
-  onClick={()=>window.location.href="/low-stock-report"}
+  onClick={() => navigate("/low-stock-report")}
 >
   <div className="card-body">
     <h6><AlertTriangle size={16}/> تنبيه مخزون</h6>
@@ -300,7 +280,11 @@ return (
 
 
 {/* عدد الأصناف */}
-<div className="glass-card text-center fade-in">
+<div
+  className="glass-card text-center fade-in"
+  style={{ cursor: "pointer" }}
+  onClick={() => navigate("/lists/items")}
+>
   <div className="card-body">
     <h6>عدد الأصناف</h6>
     <h5 className="text-warning">
@@ -310,7 +294,11 @@ return (
 </div>
 
 {/* عدد العملاء */}
-<div className="glass-card text-center fade-in">
+<div
+  className="glass-card text-center fade-in"
+  style={{ cursor: "pointer" }}
+  onClick={() => navigate("/lists/customers")}
+>
   <div className="card-body">
     <h6>عدد العملاء</h6>
     <h5 className="text-warning">
@@ -327,14 +315,22 @@ return (
   </div>
 
 
-  <div className="glass-card text-center fade-in">
+  <div
+  className="glass-card text-center fade-in"
+  style={{ cursor: "pointer" }}
+  onClick={() => navigate("/lists/cash")}
+>
     <div className="card-body">
       <h6><Wallet size={16}/> إجمالي الخزنة</h6>
       <h5 className="text-info">{totalCash.toFixed(2)}</h5>
     </div>
   </div>
 
-  <div className="glass-card text-center fade-in">
+  <div
+  className="glass-card text-center fade-in"
+  style={{ cursor: "pointer" }}
+  onClick={() => navigate("/lists/items")}
+>
     <div className="card-body">
       <h6><Package size={16}/> أعلى صنف</h6>
       <h5 className="text-success">
@@ -351,10 +347,14 @@ return (
 <div className="glass-card text-center fade-in">
   <div className="card-body">
     <h6>إجمالي الكريديت</h6>
-    <h5 className="text-danger">500.00</h5>
+    <h5 className="text-danger">0.00</h5>
   </div>
 </div>
-<div className="glass-card text-center fade-in">
+<div
+  className="glass-card text-center fade-in"
+  style={{ cursor: "pointer" }}
+  onClick={() => navigate("/customer-ledger")}
+>
   <div className="card-body">
     <h6>شيكات متأخرة</h6>
     <h5 className="text-danger">{overdueChequesCount}</h5>
