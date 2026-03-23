@@ -62,30 +62,32 @@ return (
     {/* Sidebar */}
    <div
   className="sidebar"
-  style={{
-    width: isMobile ? 260 : (collapsed ? 80 : 260),
+ style={{
+  width: isMobile ? 260 : (collapsed ? 80 : 260),
   position: "fixed",
   left: 0,
-  top: 50,
+  top: 0,
   zIndex: 9999,
 
   transform: isMobile
-  ? (collapsed ? "translateX(-260px)" : "translateX(0)")
-  : "translateX(0)",
+    ? (collapsed ? "translateX(-260px)" : "translateX(0)")
+    : "translateX(0)",
 
   transition: "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
   willChange: "transform",
-backfaceVisibility: "hidden",
-transformStyle: "preserve-3d",
-contain: "layout paint size",
+
   background: "rgba(15,23,42,0.85)",
   backdropFilter: "blur(14px)",
   borderRight: "1px solid rgba(255,255,255,0.08)",
 
   color: "#e2e8f0",
   padding: 18,
-  height: "calc(100vh - 50px)",
+
+  height: "100dvh",
+
   overflowY: "auto",
+  WebkitOverflowScrolling: "touch",
+  overscrollBehavior: "contain",
 }}
 >
 <div
