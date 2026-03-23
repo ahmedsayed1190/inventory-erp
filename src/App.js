@@ -74,14 +74,7 @@
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     // 👇 ضيف دول هنا
-    const [translateX, setTranslateX] = useState(-260);
-    const [isDragging, setIsDragging] = useState(false);
-
-    // 👇 لو مش عندك دول ضيفهم
-    const touchStartRef = useRef(0);
-    const translateRef = useRef(-260);
-    const startYRef = useRef(0);
-
+    
     useEffect(() => {
       const handleResize = () => {
         const mobile = window.innerWidth < 768;
@@ -185,33 +178,25 @@ onTouchMove={(e) => {
         
         {/* Overlay */}
     {isMobile && !collapsed && (
-    <div
-      onClick={() => {
-        setCollapsed(true);
-        setTranslateX(-260);
-        translateRef.current = -260;
-      }}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.6)",
-        backdropFilter: "blur(4px)",
-        zIndex: 9998,
-
-        opacity: Math.min(1, (translateX + 260) / 260),
-
-        pointerEvents: isDragging ? "none" : "auto"
-      }}
-    />
-  )}
+  <div
+    onClick={() => {
+      setCollapsed(true);
+    }}
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: "rgba(0,0,0,0.5)",
+      backdropFilter: "blur(4px)",
+      zIndex: 9998,
+    }}
+  />
+)}
 
         {/* Sidebar */}
-        <Sidebar
-    collapsed={collapsed}
-    setCollapsed={setCollapsed}
-    translateX={translateX}
-    isDragging={isDragging}
-  />
+    <Sidebar
+  collapsed={collapsed}
+  setCollapsed={setCollapsed}
+/>
 
         {/* Content */}
     <div
@@ -236,14 +221,12 @@ onTouchMove={(e) => {
       localStorage.setItem("sidebar", newState);
 
       // 👇 مهم جدا للموبايل
-      if (newState) {
-        setTranslateX(-260);
-        translateRef.current = -260;
-      } else {
-        setTranslateX(0);
-        translateRef.current = 0;
-      }
-    }}
+      onToggleSidebar={() => {
+  const newState = !collapsed;
+
+  setCollapsed(newState);
+  localStorage.setItem("sidebar", newState);
+}}
   />
 
           <div style={{ padding: 20 }}>

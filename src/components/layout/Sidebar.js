@@ -2,8 +2,8 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-function Sidebar({ collapsed, setCollapsed, translateX, isDragging }) {
-  const { t } = useTranslation();
+function Sidebar({ collapsed, setCollapsed }) {
+const { t } = useTranslation();
   const [indicatorTop, setIndicatorTop] = useState(0);
 const [openSection, setOpenSection] = useState(null);
 const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -70,12 +70,10 @@ return (
   zIndex: 9999,
 
   transform: isMobile
-  ? `translateX(${Math.max(-260, Math.min(0, translateX))}px)`
+  ? (collapsed ? "translateX(-260px)" : "translateX(0)")
   : "translateX(0)",
 
-  transition: isDragging
-  ? "none"
-  : "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+  transition: "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
   willChange: "transform",
 backfaceVisibility: "hidden",
 transformStyle: "preserve-3d",
