@@ -1,6 +1,6 @@
   import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
   import "./styles/ui.css";
-  import { useState, useEffect, useRef } from "react";
+  import { useState, useEffect } from "react";
   import { ToastContainer } from "react-toastify";
   import "react-toastify/dist/ReactToastify.css";
 
@@ -96,86 +96,9 @@
       overflowX: "hidden",
       position: "relative",
     }}
+    >
 
- onTouchStart={(e) => {
-  const touch = e.touches[0];
-
-  touchStartRef.current = touch.clientX;
-  startYRef.current = touch.clientY;
-
-  setIsDragging(false);
-}}
-
-onTouchMove={(e) => {
-  const touch = e.touches[0];
-  if (!touch) return;
-
-  const currentX = touch.clientX;
-  const currentY = touch.clientY;
-
-  const diffX = currentX - touchStartRef.current;
-  const diffY = currentY - startYRef.current;
-
-  // 👇 لسه محددناش نوع الحركة
-  if (!isDragging) {
-    // 👇 لو الحركة رأسية → سيبها ومتكملش
-    if (Math.abs(diffY) > Math.abs(diffX)) {
-      return;
-    }
-
-    // 👇 لو أفقية → ابدأ drag
-    setIsDragging(true);
-  }
-
-  // 👇 لو مش dragging خلاص
-  if (!isDragging && Math.abs(diffX) < 10) return;
-
-  let newTranslate;
-
-  if (collapsed) {
-    newTranslate = -260 + diffX;
-  } else {
-    newTranslate = diffX;
-  }
-
-  newTranslate = Math.max(-260, Math.min(0, newTranslate));
-
-  translateRef.current = newTranslate;
-  setTranslateX(newTranslate);
-
-  // 👇 يمنع الشاشة البيضا بس لما يكون أفقي
-  e.preventDefault();
-}}
-
-    // 👇 هنا تحط الكود بتاعك
-  onTouchEnd={() => {
-    if (!isDragging) return;
-
-    setIsDragging(false);
-
-    const current = translateRef.current;
-
-    // 👇 القرار يعتمد على المكان مش collapsed
-    if (current > -130) {
-      // 👉 افتح
-      setCollapsed(false);
-      setTranslateX(0);
-      translateRef.current = 0;
-    } else {
-      // 👉 اقفل
-      setCollapsed(true);
-      setTranslateX(-260);
-      translateRef.current = -260;
-    }
-
-    touchStartRef.current = 0;
-  }}
-  onTouchCancel={() => {
-    setIsDragging(false);
-    touchStartRef.current = 0;
-  }}
-  >
-        
+ 
         {/* Overlay */}
     {isMobile && !collapsed && (
   <div
@@ -207,27 +130,18 @@ onTouchMove={(e) => {
         : (collapsed ? 0 : 260),
 
       transform: "none",
-      transition: isDragging
-        ? "none"
-        : "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
+     transition: "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
     }}
   >
 
-      <Header
-    onToggleSidebar={() => {
-      const newState = !collapsed;
+     <Header
+  onToggleSidebar={() => {
+    const newState = !collapsed;
 
-      setCollapsed(newState);
-      localStorage.setItem("sidebar", newState);
-
-      // 👇 مهم جدا للموبايل
-      onToggleSidebar={() => {
-  const newState = !collapsed;
-
-  setCollapsed(newState);
-  localStorage.setItem("sidebar", newState);
-}}
-  />
+    setCollapsed(newState);
+    localStorage.setItem("sidebar", newState);
+  }}
+/>
 
           <div style={{ padding: 20 }}>
             <Routes>
