@@ -94,30 +94,6 @@
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }, []);
-    useEffect(() => {
-  const preventScroll = (e) => {
-    if (!isDragging) return;
-
-    const touch = e.touches[0];
-    if (!touch) return;
-
-    const diffX = Math.abs(touch.clientX - touchStartRef.current);
-    const diffY = Math.abs(touch.clientY - startYRef.current);
-
-    // 👇 امنع بس لو السحب أفقي
-    if (diffX > diffY) {
-      e.preventDefault();
-    }
-  };
-
-  document.addEventListener("touchmove", preventScroll, {
-    passive: false,
-  });
-
-  return () => {
-    document.removeEventListener("touchmove", preventScroll);
-  };
-}, [isDragging]);
 
     return (
     <div
@@ -134,35 +110,44 @@
 
   touchStartRef.current = touch.clientX;
   startYRef.current = touch.clientY; // 👈 مهم
-
-  if (touch.clientX < 60 || translateRef.current > -260) {
     setIsDragging(true);
-  }
+  
 }}
 
  onTouchMove={(e) => {
-  if (!isDragging) return;
-
-  e.preventDefault(); // ✅ ضيف السطر ده
-
   const touch = e.touches[0];
   if (!touch) return;
 
   const currentX = touch.clientX;
-  const diff = currentX - touchStartRef.current;
+  const currentY = touch.clientY;
+
+  const diffX = currentX - touchStartRef.current;
+  const diffY = currentY - startYRef.current;
+
+  // 👇 نحدد هل الحركة أفقية ولا رأسية
+  const isHorizontal = Math.abs(diffX) > Math.abs(diffY);
+
+  // 👇 لو مش أفقي → سيب السكرول شغال
+  if (!isHorizontal) return;
+
+  // 👇 هنا نبدأ drag بقى
+  setIsDragging(true);
 
   let newTranslate;
 
   if (collapsed) {
-    newTranslate = -260 + diff;
+    newTranslate = -260 + diffX;
   } else {
-    newTranslate = diff;
+    newTranslate = diffX;
   }
 
   newTranslate = Math.max(-260, Math.min(0, newTranslate));
 
   translateRef.current = newTranslate;
   setTranslateX(newTranslate);
+
+  // 👇 مهم جدًا يمنع الشاشة البيضا
+  e.preventDefault();
 }}
 
     // 👇 هنا تحط الكود بتاعك
