@@ -420,7 +420,21 @@ const saveInvoice = () => {
 
   // 🔥 هنا تحط كود رجوع المخزون القديم
   if (currentIndex !== -1) {
-    const oldInvoice = invoices[currentIndex];
+    // ✅ رجوع الكاش القديم لو الفاتورة كانت كاش
+const oldInvoice = invoices[currentIndex];
+
+if (oldInvoice.paymentMethod === "cash") {
+  const bankCash =
+    JSON.parse(localStorage.getItem("bankCash")) || [];
+
+  if (bankCash.length) {
+    bankCash[0].balance =
+      Number(bankCash[0].balance || 0) -
+      Number(oldInvoice.total);
+
+    localStorage.setItem("bankCash", JSON.stringify(bankCash));
+  }
+}
 
     const restoredItems = items.map(item => {
       const oldSoldItems = oldInvoice.items.filter(
@@ -454,6 +468,7 @@ const saveInvoice = () => {
     setItems(restoredItems);
     localStorage.setItem("items", JSON.stringify(restoredItems));
   }
+  
 /* ===== تسجيل حركة خزنة لو الدفع نقدي ===== */
 
 if (paymentMethod === "cash") {
@@ -630,31 +645,36 @@ let updatedCustomers = customers;
 if (currentIndex !== -1) {
   const oldInvoice = invoices[currentIndex];
 
-  updatedCustomers = customers.map(c => {
-    if (c.code === oldInvoice.customerCode) {
+  // رجوع الرصيد القديم لو كان آجل
+  if (oldInvoice.paymentMethod !== "cash") {
+    updatedCustomers = customers.map(c => {
+      if (c.code === oldInvoice.customerCode) {
+        return {
+          ...c,
+          balance:
+            (Number(c.balance) || 0) -
+            Number(oldInvoice.remainingAmount || 0)
+        };
+      }
+      return c;
+    });
+  }
+}
+
+/* إضافة الرصيد الجديد */
+if (paymentMethod !== "cash") {
+  updatedCustomers = updatedCustomers.map(c => {
+    if (c.code === selectedCustomer.code) {
       return {
         ...c,
         balance:
-          (Number(c.balance) || 0) -
-          Number(oldInvoice.remainingAmount || 0)
+          (Number(c.balance) || 0) +
+          Number(remainingAmount)
       };
     }
     return c;
   });
 }
-
-/* إضافة الرصيد الجديد */
-updatedCustomers = updatedCustomers.map(c => {
-  if (c.code === selectedCustomer.code) {
-    return {
-      ...c,
-      balance:
-        (Number(c.balance) || 0) +
-        Number(remainingAmount)
-    };
-  }
-  return c;
-});
 
 setCustomers(updatedCustomers);
 localStorage.setItem("customers", JSON.stringify(updatedCustomers));
@@ -719,18 +739,47 @@ const deleteInvoice = () => {
   setItems(restoredItems);
   localStorage.setItem("items", JSON.stringify(restoredItems));
 
-  /* ===== 2️⃣ رجوع رصيد العميل ===== */
-  const updatedCustomers = customers.map(c => {
-    if (c.code === invoiceToDelete.customerCode) {
+/* ===== تحديث رصيد العميل ===== */
+
+let updatedCustomers = customers;
+
+/* لو تعديل فاتورة */
+if (currentIndex !== -1) {
+  const oldInvoice = invoices[currentIndex];
+
+  // رجوع الرصيد القديم لو كان آجل
+  if (oldInvoice.paymentMethod !== "cash") {
+    updatedCustomers = customers.map(c => {
+      if (c.code === oldInvoice.customerCode) {
+        return {
+          ...c,
+          balance:
+            (Number(c.balance) || 0) -
+            Number(oldInvoice.remainingAmount || 0)
+        };
+      }
+      return c;
+    });
+  }
+}
+
+/* إضافة الرصيد الجديد */
+if (paymentMethod !== "cash") {
+  updatedCustomers = updatedCustomers.map(c => {
+    if (c.code === selectedCustomer.code) {
       return {
         ...c,
         balance:
-          (Number(c.balance) || 0) -
-          Number(invoiceToDelete.remainingAmount || 0)
+          (Number(c.balance) || 0) +
+          Number(remainingAmount)
       };
     }
     return c;
   });
+}
+
+setCustomers(updatedCustomers);
+localStorage.setItem("customers", JSON.stringify(updatedCustomers));
 
   setCustomers(updatedCustomers);
   localStorage.setItem("customers", JSON.stringify(updatedCustomers));
