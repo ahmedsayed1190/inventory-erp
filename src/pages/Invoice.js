@@ -586,7 +586,7 @@ try {
     ? invoices[currentIndex].invoiceId
     : nextInvoiceNumber,
 customerName: selectedCustomer.name,
-customerCode: selectedCustomer.customerNumber,
+customerCode: selectedCustomer.code,
     warehouse: selectedWarehouse,
     items: invoiceItems,
     date: invoiceDate,
