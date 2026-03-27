@@ -629,26 +629,31 @@ setInvoices(updatedInvoices);
 let movements =
 JSON.parse(localStorage.getItem("stockMovements")) || [];
 
+// 🧹 حذف القديم
+if (currentIndex !== -1) {
+  const oldInvoice = invoices[currentIndex];
+
+  movements = movements.filter(
+    (m) => String(m.reference) !== String(oldInvoice.invoiceId)
+  );
+}
+
+// ➕ إضافة الجديد
 invoiceItems.forEach((it) => {
-
-movements.push({
-date: invoiceDate,
-code: it.code,
-warehouse: selectedWarehouse,
-type: "sale",
-description: `بيع للعميل ${selectedCustomer.name}`,
-party: selectedCustomer.name,
-in: 0,
-out: Number(it.qty),
-reference: newInvoice.invoiceId
+  movements.push({
+    date: invoiceDate,
+    code: it.code,
+    warehouse: selectedWarehouse,
+    type: "sale",
+    description: `بيع للعميل ${selectedCustomer.name}`,
+    party: selectedCustomer.name,
+    in: 0,
+    out: Number(it.qty),
+    reference: newInvoice.invoiceId
+  });
 });
 
-});
-
-localStorage.setItem(
-"stockMovements",
-JSON.stringify(movements)
-);
+localStorage.setItem("stockMovements", JSON.stringify(movements));
 
 /* =============================== */
 
