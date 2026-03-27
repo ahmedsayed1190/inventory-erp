@@ -419,56 +419,71 @@ const saveInvoice = () => {
     return alert(t("invoice.completeData"));
 
   // 🔥 هنا تحط كود رجوع المخزون القديم
+ 
   if (currentIndex !== -1) {
-    // ✅ رجوع الكاش القديم لو الفاتورة كانت كاش
-const oldInvoice = invoices[currentIndex];
+  const oldInvoice = invoices[currentIndex];
 
-if (oldInvoice.paymentMethod === "cash") {
-  const bankCash =
-    JSON.parse(localStorage.getItem("bankCash")) || [];
+  /* ===== 1. رجوع الخزنة لو كانت كاش ===== */
+  if (oldInvoice.paymentMethod === "cash") {
+    const bankCash =
+      JSON.parse(localStorage.getItem("bankCash")) || [];
 
-  if (bankCash.length) {
-    bankCash[0].balance =
-      Number(bankCash[0].balance || 0) -
-      Number(oldInvoice.total);
-
-    localStorage.setItem("bankCash", JSON.stringify(bankCash));
+    if (bankCash.length) {
+      bankCash[0].balance -= Number(oldInvoice.total || 0);
+      localStorage.setItem("bankCash", JSON.stringify(bankCash));
+    }
   }
-}
 
-    const restoredItems = items.map(item => {
-      const oldSoldItems = oldInvoice.items.filter(
-        invItem =>
-          invItem.code === item.code &&
-          invItem.warehouse === oldInvoice.warehouse
-      );
-
-
-      if (!oldSoldItems.length) return item;
-
-      const restoredQty = oldSoldItems.reduce(
-        (sum, invItem) => sum + Number(invItem.qty),
-        0
-      );
-
-      if (item.warehouses && item.warehouses[oldInvoice.warehouse] != null) {
+  /* ===== 2. رجوع رصيد العميل لو كانت آجل ===== */
+  if (oldInvoice.paymentMethod !== "cash") {
+    const updatedCustomers = customers.map(c => {
+      if (c.code === oldInvoice.customerCode) {
         return {
-          ...item,
-          warehouses: {
-            ...item.warehouses,
-            [oldInvoice.warehouse]:
-              Number(item.warehouses[oldInvoice.warehouse]) + restoredQty
-          }
+          ...c,
+          balance:
+            (Number(c.balance) || 0) -
+            Number(oldInvoice.remainingAmount || 0)
         };
       }
-
-      return item;
+      return c;
     });
 
-    setItems(restoredItems);
-    localStorage.setItem("items", JSON.stringify(restoredItems));
+    setCustomers(updatedCustomers);
+    localStorage.setItem("customers", JSON.stringify(updatedCustomers));
   }
-  
+
+  /* ===== 3. رجوع المخزون ===== */
+  const restoredItems = items.map(item => {
+    const oldSoldItems = oldInvoice.items.filter(
+      invItem =>
+        invItem.code === item.code &&
+        invItem.warehouse === oldInvoice.warehouse
+    );
+
+    if (!oldSoldItems.length) return item;
+
+    const restoredQty = oldSoldItems.reduce(
+      (sum, invItem) => sum + Number(invItem.qty),
+      0
+    );
+
+    if (item.warehouses && item.warehouses[oldInvoice.warehouse] != null) {
+      return {
+        ...item,
+        warehouses: {
+          ...item.warehouses,
+          [oldInvoice.warehouse]:
+            Number(item.warehouses[oldInvoice.warehouse]) + restoredQty
+        }
+      };
+    }
+
+    return item;
+  });
+
+  setItems(restoredItems);
+  localStorage.setItem("items", JSON.stringify(restoredItems));
+}
 /* ===== تسجيل حركة خزنة لو الدفع نقدي ===== */
 
 if (paymentMethod === "cash") {
@@ -662,18 +677,22 @@ if (currentIndex !== -1) {
 }
 
 /* إضافة الرصيد الجديد */
-if (paymentMethod !== "cash") {
-  updatedCustomers = updatedCustomers.map(c => {
-    if (c.code === selectedCustomer.code) {
-      return {
-        ...c,
-        balance:
-          (Number(c.balance) || 0) +
-          Number(remainingAmount)
-      };
-    }
-    return c;
-  });
+if (currentIndex !== -1) {
+  const oldInvoice = invoices[currentIndex];
+
+  if (oldInvoice.paymentMethod !== "cash") {
+    updatedCustomers = customers.map(c => {
+      if (c.code === oldInvoice.customerCode) {
+        return {
+          ...c,
+          balance:
+            (Number(c.balance) || 0) -
+            Number(oldInvoice.remainingAmount || 0)
+        };
+      }
+      return c;
+    });
+  }
 }
 
 setCustomers(updatedCustomers);
@@ -780,9 +799,6 @@ if (paymentMethod !== "cash") {
 
 setCustomers(updatedCustomers);
 localStorage.setItem("customers", JSON.stringify(updatedCustomers));
-
-  setCustomers(updatedCustomers);
-  localStorage.setItem("customers", JSON.stringify(updatedCustomers));
 
   /* ===== 3️⃣ حذف الفاتورة ===== */
   const updatedInvoices = invoices.filter((_, i) => i !== currentIndex);
