@@ -1,7 +1,9 @@
 /* الخلفية العامة */
+/* ===== LIGHT MODE ===== */
 body {
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color: #e2e8f0;
+  background: #f1f5f9;
+  color: #111827;
+
   overscroll-behavior-x: none;
 }
 
@@ -99,4 +101,48 @@ body {
   color: #38bdf8;
 
   box-shadow: inset 0 0 10px rgba(56,189,248,0.15);
+}
+/* ================= FIX LIGHT MODE INPUTS ================= */
+
+/* أي input في اللايت مود */
+body:not(.dark-mode) input,
+body:not(.dark-mode) select,
+body:not(.dark-mode) textarea {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+/* placeholder */
+body:not(.dark-mode) input::placeholder {
+  color: #9ca3af !important;
+}
+
+/* dropdown */
+body:not(.dark-mode) .erp-dropdown {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* items */
+body:not(.dark-mode) .erp-dropdown-item {
+  color: #111827 !important;
+}
+
+body:not(.dark-mode) .erp-dropdown-item:hover {
+  background: #e0e7ff !important;
+  color: #000 !important;
+}
+/* 🔥 FIX ALERT LIGHT MODE */
+
+/* 🔥 FIX ALERT (النص الأصفر) */
+
+.alert {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #111827;
+}
+
+.alert * {
+  color: #111827;
 }

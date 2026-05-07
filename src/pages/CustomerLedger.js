@@ -44,19 +44,19 @@ if(!customerCode) return [];
 let rows = [];
 
 const customer = customers.find(
-c => String(c.customerNumber) === String(customerCode)
+   c => String(c.customerNumber) === String(customerCode)
 );
 
 /* ===== الرصيد الافتتاحي ===== */
 
-if(customer?.openingBalance){
+if (customer && Number(customer.openingBalance || customer.balance) !== 0) {
 
 rows.unshift({
 date: customer.openingBalanceDate || "2026-01-01",
-description:"رصيد افتتاحي",
-invoiceId:"-",
-debit:Number(customer.openingBalance || 0),
-credit:0
+description: "رصيد افتتاحي",
+invoiceId: "-",
+debit: Number(customer.openingBalance || customer.balance || 0),
+credit: 0
 });
 
 }
@@ -65,37 +65,52 @@ credit:0
 /* ===== فواتير البيع ===== */
 
 const selectedCustomer = customers.find(
-  c => String(c.code) === String(customerCode)
+    c => String(c.customerNumber) === String(customerCode)
 );
 
 invoices
-.filter(inv => String(inv.customerCode) === String(customerCode))
+.filter(inv => 
+  String(inv.customerCode) === String(customerCode)
+)
 .forEach(inv => {
 
-rows.push({
-date: inv.date,
-description: "🧾 فاتورة مبيعات",
-invoiceId: inv.invoiceId,
-debit: Number(inv.total || inv.subTotal || 0),
-credit: 0
-});
+  // ❌ الكاش ملوش دعوة بالعميل
+  if (inv.paymentMethod === "cash") return;
+
+  // ✔️ الآجل والشيك فقط
+  const debitAmount = Number(inv.total || 0);
+
+  rows.push({
+    date: inv.date,
+    description:
+      inv.paymentMethod === "credit"
+        ? "🧾 فاتورة آجل"
+        : "💳 فاتورة بشيك",
+
+    invoiceId: inv.invoiceId,
+    debit: debitAmount,
+    credit: 0
+  });
 
 });
 
 /* ===== التحصيل ===== */
 
 cashTransactions
-.filter(t => String(t.customerCode) === String(customerCode))
+.filter(t =>
+  String(t.customerCode) === String(customerCode) &&
+  t.operationType !== "sales"   // 🔥 يمنع الكاش من الظهور
+)
 .forEach(t => {
 
-rows.push({
-date: t.date,
-description: "💰 تحصيل",
-invoiceId: "-",
-debit: 0,
-credit: Number(t.amount || 0)
+  rows.push({
+    id:t.id,
+    date: t.date,
+    description: "💰 تحصيل",
+    invoiceId: "-",
+    debit: 0,
+    credit: Number(t.amount || 0)
 });
-
 });
 
 /* ===== المرتجعات ===== */
@@ -161,6 +176,39 @@ balance:runningBalance
 
 });
 
+/* ===== تعديل دفعة ===== */
+
+const editPayment = (id) => {
+
+navigate(`/add-cash-transaction?id=${id}`);
+
+};
+
+/* ===== حذف دفعة ===== */
+
+const deletePayment = (id) => {
+
+const confirmDelete =
+window.confirm("هل تريد حذف الدفعة؟");
+
+if(!confirmDelete) return;
+
+const cashTransactions =
+JSON.parse(localStorage.getItem("cashTransactions")) || [];
+
+const updated = cashTransactions.filter(
+t => String(t.id) !== String(id)
+);
+
+localStorage.setItem(
+"cashTransactions",
+JSON.stringify(updated)
+);
+
+window.location.reload();
+
+};
+
 const printPDF = () => window.print();
 
 return (
@@ -187,7 +235,7 @@ onChange={(e)=>setCustomerCode(e.target.value)}
 
 {customers.map(c=>(
 <option key={c.customerNumber} value={c.customerNumber}>
-{c.name}
+  {c.name}
 </option>
 ))}
 
@@ -245,6 +293,56 @@ disabled={!customerCode}
 
 <div className="card-body">
 
+<div className="row mb-3">
+
+<div className="col-md-3">
+
+<div className="border rounded p-2 bg-dark text-light">
+
+<div className="small text-secondary">
+الرصيد الافتتاحي
+</div>
+
+<div className="fw-bold">
+
+{
+Number(
+customers.find(
+c => String(c.customerNumber) === String(customerCode)
+)?.openingBalance || 0
+).toFixed(2)
+}
+
+</div>
+
+</div>
+
+</div>
+
+<div className="col-md-3">
+
+<div className="border rounded p-2 bg-dark text-light">
+
+<div className="small text-secondary">
+الرصيد الحالي
+</div>
+
+<div className="fw-bold text-warning">
+
+{
+statementRows.length > 0
+? statementRows[statementRows.length - 1].balance.toFixed(2)
+: "0.00"
+}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 <table className="table table-bordered table-striped">
 
 <thead className="table-dark">
@@ -257,6 +355,7 @@ disabled={!customerCode}
 <th>مدين</th>
 <th>دائن</th>
 <th>الرصيد</th>
+<th>إجراءات</th>
 
 </tr>
 
@@ -268,7 +367,7 @@ disabled={!customerCode}
 
 <tr>
 
-<td colSpan="6" className="text-center">
+<td colSpan="7" className="text-center">
 لا توجد حركات
 </td>
 
@@ -310,6 +409,36 @@ onClick={()=>navigate(`/invoice/${row.invoiceId}`)}
 <td>{row.credit || "-"}</td>
 
 <td>{row.balance}</td>
+
+<td>
+
+{row.description === "💰 تحصيل" && (
+
+<div className="d-flex gap-1">
+
+<button
+className="btn btn-sm btn-warning"
+onClick={()=>editPayment(row.id)}
+>
+
+تعديل
+
+</button>
+
+<button
+className="btn btn-sm btn-danger"
+onClick={()=>deletePayment(row.id)}
+>
+
+حذف
+
+</button>
+
+</div>
+
+)}
+
+</td>
 
 </tr>
 

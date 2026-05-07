@@ -31,12 +31,13 @@ function SystemSettings() {
         style={{
           marginTop: 30,
           padding: 20,
-          border: "1px solid red",
           borderRadius: 6,
-          background: "#fff5f5"
+          background: "rgba(15,23,42,0.9)",
+          color: "#e2e8f0",
+          border: "1px solid rgba(255,0,0,0.4)"
         }}
       >
-        <h3 style={{ color: "red" }}>🗑️ مسح جميع البيانات</h3>
+        <h3 style={{ color: "#f87171" }}>🗑️ مسح جميع البيانات</h3>
 
         <ul>
           <li>جميع الفواتير</li>
@@ -48,7 +49,7 @@ function SystemSettings() {
         <button
           onClick={handleReset}
           style={{
-            background: "red",
+            background: "#ef4444",
             color: "#fff",
             border: "none",
             padding: "10px 20px",

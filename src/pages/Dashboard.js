@@ -40,12 +40,13 @@ const {
   overdueChequesCount,
   chartData,
   todaySales,
-  topItem
+  topItem,
+  todayCash,
+  totalCredit   // 👈 ضيف دي
 } = useMemo(() => {
 
   const today = new Date();
-  const todayStr = today.toISOString().slice(0, 10);
-
+const todayStr = new Date().toISOString().slice(0, 10);
   const customers =
     JSON.parse(localStorage.getItem("customers")) || [];
 
@@ -158,18 +159,42 @@ totalCash -= Number(t.amount || 0);
   /* ===== مبيعات وربح اليوم ===== */
 
   let todaySales = 0;
+  invoices.forEach(inv => {
 
-  invoices
-    .filter(inv => inv.date === todayStr)
-    .forEach(inv => {
+  if (!inv.date) return;
 
-      todaySales += Number(inv.total || 0);
+  const invDate = new Date(inv.date).toISOString().slice(0, 10);
 
-      inv.items?.forEach(it => {
+  if (invDate === todayStr) {
+    todaySales += Number(inv.total || 0);
+  }
 
-      });
+});
 
-    });
+  /* ===== رصيد اليوم ===== */
+
+let todayCash = 0;
+
+cashTransactions.forEach(t => {
+  if (t.date === todayStr) {
+    if (t.type === "in") {
+      todayCash += Number(t.amount || 0);
+    } else {
+      todayCash -= Number(t.amount || 0);
+    }
+  }
+});
+/* ===== إجمالي الكريديت ===== */
+
+/* ===== إجمالي الكريديت ===== */
+
+let totalCredit = 0;
+
+/* ✅ الرصيد الافتتاحي */
+customers.forEach(c => {
+  totalCredit += Number(c.balance || 0);
+});
+
 
 
   /* ===== رسم بياني آخر 6 شهور ===== */
@@ -227,15 +252,17 @@ totalCash -= Number(t.amount || 0);
 ]
   };
 
-  return {
-    topCustomer,
-    lowStockItems,
-    totalCash,
-    overdueChequesCount,
-    chartData,
-    todaySales,
-    topItem
-  };
+ return {
+  topCustomer,
+  lowStockItems,
+  totalCash,
+  overdueChequesCount,
+  chartData,
+  todaySales,
+  topItem,
+  todayCash,
+  totalCredit   // 👈 ضيف دي
+};
 
 }, []);
 
@@ -341,13 +368,13 @@ return (
   <div className="glass-card text-center fade-in">
   <div className="card-body">
     <h6>رصيد اليوم</h6>
-    <h5 className="text-primary">0.00</h5>
+    <h5 className="text-primary">{todayCash.toFixed(2)}</h5>
   </div>
 </div>
 <div className="glass-card text-center fade-in">
   <div className="card-body">
     <h6>إجمالي الكريديت</h6>
-    <h5 className="text-danger">0.00</h5>
+    <h5 className="text-danger">{totalCredit.toFixed(2)}</h5>
   </div>
 </div>
 <div

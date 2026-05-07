@@ -102,10 +102,7 @@ return (
       address,
 openingBalance: Number(openingBalance) || 0,
 openingBalanceDate,
-balance:
-  currentIndex === -1
-    ? Number(openingBalance) || 0
-    : customers[currentIndex].balance
+balance: Number(openingBalance) || 0
     };
 
     const updated = [...customers];
@@ -177,10 +174,12 @@ balance:
   <div className="col-md-5">
     <label>{t("definitions.customers.name")}</label>
     <input
-      className="form-control"
-      value={name}
-      onChange={e => setName(e.target.value)}
-    />
+  className="form-control"
+  autoComplete="new-password"
+  name="customer-name-field"
+  value={name}
+  onChange={e => setName(e.target.value)}
+/>
   </div>
 
   <div className="col-md-4">

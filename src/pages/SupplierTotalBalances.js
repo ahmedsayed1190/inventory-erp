@@ -12,6 +12,7 @@ const today = new Date().toISOString().slice(0,10);
 
 const [fromDate,setFromDate] = useState("2026-01-01");
 const [toDate,setToDate] = useState(today);
+const [invoiceMode,setInvoiceMode] = useState("credit");
 const [sortByDebt,setSortByDebt] = useState(false);
 
 /* ===== DATA ===== */
@@ -38,13 +39,25 @@ const suppliersWithBalance = useMemo(()=>{
 
 return suppliers.map((supplier)=>{
 
-let credit = 0;
+let credit = Number(supplier.openingBalance || 0);
 let debit = 0;
+/* ===== فواتير الآجل فقط ===== */
+
+const creditInvoiceNumbers = purchaseInvoices
+.filter(i => String(i.supplierId) === String(supplier.id))
+.filter(i => i.paymentType === "credit")
+.map(i => i.invoiceNumber);
 
 /* فواتير الشراء */
-
 purchaseInvoices
 .filter(i => String(i.supplierId) === String(supplier.id))
+.filter(i=>{
+
+if(invoiceMode === "all") return true;
+
+return i.paymentType === "credit";
+
+})
 .forEach(i=>{
 
 const d = new Date(i.date);
@@ -79,9 +92,17 @@ debit += Number(r.total || 0);
 
 cashTransactions
 .filter(t => t.operationType === "supplierPayment")
-.filter(t => String(t.supplierId) === String(supplier.id))
-.forEach(t=>{
+.filter(t => t.supplierName === supplier.name)
+.filter(t=>{
 
+if(invoiceMode === "all") return true;
+
+/* الآجل فقط */
+
+return creditInvoiceNumbers.includes(t.invoiceNumber);
+
+})
+.forEach(t=>{
 const d = new Date(t.date);
 
 if(
@@ -105,7 +126,8 @@ purchaseInvoices,
 purchaseReturns,
 cashTransactions,
 fromDate,
-toDate
+toDate,
+invoiceMode
 ]);
 
 /* ===== فلترة المورد ===== */
@@ -161,12 +183,13 @@ return(
 
 <div className="col-md-3">
 
+<label>المورد</label>
+
 <select
 className="form-select"
 value={selectedSupplier}
 onChange={(e)=>setSelectedSupplier(e.target.value)}
 >
-
 <option value="">اختر المورد</option>
 
 {suppliers.map(s=>(
@@ -181,6 +204,8 @@ onChange={(e)=>setSelectedSupplier(e.target.value)}
 
 <div className="col-md-2">
 
+<label>من تاريخ</label>
+
 <input
 type="date"
 className="form-control"
@@ -191,6 +216,30 @@ onChange={(e)=>setFromDate(e.target.value)}
 </div>
 
 <div className="col-md-2">
+
+<label>نوع الفواتير</label>
+
+<select
+className="form-select"
+value={invoiceMode}
+onChange={(e)=>setInvoiceMode(e.target.value)}
+>
+
+<option value="credit">
+الآجل فقط
+</option>
+
+<option value="all">
+الكاش والآجل
+</option>
+
+</select>
+
+</div>
+
+<div className="col-md-2">
+
+<label>إلى تاريخ</label>
 
 <input
 type="date"

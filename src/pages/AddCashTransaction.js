@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function AddCashTransaction() {
 
@@ -13,6 +13,10 @@ function AddCashTransaction() {
   const [customerId, setCustomerId] = useState("");
   const [supplierId, setSupplierId] = useState("");
 
+  /* ✅ نجيب id لو تعديل */
+  const params = new URLSearchParams(window.location.search);
+  const editId = params.get("id");
+
   const expenseDefinitions =
     JSON.parse(localStorage.getItem("expenseDefinitions")) || [];
 
@@ -22,6 +26,32 @@ function AddCashTransaction() {
   const suppliers =
     JSON.parse(localStorage.getItem("suppliers")) || [];
 
+  /* ===================== */
+  /* ✅ تحميل البيانات */
+  /* ===================== */
+  useEffect(() => {
+
+    if (!editId) return;
+
+    const cashTransactions =
+      JSON.parse(localStorage.getItem("cashTransactions")) || [];
+
+    const t = cashTransactions.find(x => String(x.id) === String(editId));
+
+    if (t) {
+      setOperationType(t.operationType);
+      setAmount(t.amount);
+      setDescription(t.description);
+      setDate(t.date);
+      setExpenseType(t.expenseType || "");
+      setCustomerId(t.customerCode || "");
+    }
+
+  }, [editId]);
+
+  /* ===================== */
+  /* حفظ */
+  /* ===================== */
   const handleSave = () => {
 
     if (!amount || Number(amount) <= 0) {
@@ -38,34 +68,47 @@ function AddCashTransaction() {
     const cashTransactions =
       JSON.parse(localStorage.getItem("cashTransactions")) || [];
 
-const customer =
-customers.find(c => String(c.customerNumber) === String(customerId));
+    const customer =
+      customers.find(c => String(c.customerNumber) === String(customerId));
 
-const supplier =
-suppliers.find(s => s.id === Number(supplierId));
+    const supplier =
+      suppliers.find(s => s.id === Number(supplierId));
 
-const newTransaction = {
-  id: Date.now(),
-  type,
-  operationType,
-  amount: Number(amount),
+    const newTransaction = {
+      id: editId ? Number(editId) : Date.now(),
+      type,
+      operationType,
+      amount: Number(amount),
 
-customerCode: customer ? customer.customerNumber : "",
-  customerName: customer ? customer.name : "",
+      customerCode: customer ? customer.customerNumber : "",
+      customerName: customer ? customer.name : "",
 
-  supplierName: supplier ? supplier.name : "",
-  expenseType: expenseType || "",
+      supplierName: supplier ? supplier.name : "",
+      expenseType: expenseType || "",
 
-  description: description,
-  date
-};
+      description: description,
+      date
+    };
+
+    /* ===================== */
+    /* ✅ تعديل أو إضافة */
+    /* ===================== */
+    let updated;
+
+    if (editId) {
+      updated = cashTransactions.map(t =>
+        String(t.id) === String(editId) ? newTransaction : t
+      );
+    } else {
+      updated = [...cashTransactions, newTransaction];
+    }
 
     localStorage.setItem(
       "cashTransactions",
-      JSON.stringify([...cashTransactions, newTransaction])
+      JSON.stringify(updated)
     );
 
-    alert("تم حفظ العملية بنجاح ✅");
+    alert(editId ? "تم تعديل العملية ✅" : "تم حفظ العملية بنجاح ✅");
 
     setAmount("");
     setDescription("");

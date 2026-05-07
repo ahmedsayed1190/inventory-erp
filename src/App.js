@@ -1,5 +1,6 @@
   import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
   import "./styles/ui.css";
+  import "./styles/dark-theme.css";
   import { useState, useEffect } from "react";
   import { ToastContainer } from "react-toastify";
   import "react-toastify/dist/ReactToastify.css";
@@ -20,7 +21,6 @@
   import InvoicePrint from "./pages/InvoicePrint";
   import Invoice from "./pages/Invoice";
   import SalesInvoices from "./pages/SalesInvoices";
-  import SalesInvoiceDetails from "./pages/SalesInvoiceDetails";
   import SalesReturn from "./pages/SalesReturn";
   import CustomerLedger from "./pages/CustomerLedger";
   import CustomerTotalBalances from "./pages/CustomerTotalBalances";
@@ -49,6 +49,7 @@
   import StockReport from "./pages/StockReport";
   import ItemMovementReport from "./pages/ItemMovementReport";
   import ProfitReport from "./pages/ProfitReport";
+  import ItemMovementSummary from "./pages/ItemMovementSummary";
 
   /* ===== Lists ===== */
   import CustomersList from "./pages/lists/CustomersList";
@@ -67,7 +68,7 @@
   /* ======================= */
   /* ===== Main Layout ===== */
   /* ======================= */
-  function MainLayout() {
+  function MainLayout({ darkMode, setDarkMode }) {
     const [collapsed, setCollapsed] = useState(
     localStorage.getItem("sidebar") === "true"
   );
@@ -91,7 +92,7 @@
     return (
     <div
     style={{
-      background: "#0f172a",
+      background: darkMode ? "#0f172a" : "#f1f5f9",
       minHeight: "100vh",
       overflowX: "hidden",
       position: "relative",
@@ -119,32 +120,27 @@
     <Sidebar
   collapsed={collapsed}
   setCollapsed={setCollapsed}
-/>
-
-        {/* Content */}
-    <div
-    style={{
-      marginTop: 50, // 👈 مهم عشان الهيدر ثابت
-      marginLeft: isMobile
-        ? 0
-        : (collapsed ? 0 : 260),
-
-      transform: "none",
-     transition: "transform 0.35s cubic-bezier(0.22,1,0.36,1)",
-    }}
-  >
-
-     <Header
+/>{/* Header بره الكونتينر */}
+<Header
+  darkMode={darkMode}
+  setDarkMode={setDarkMode}
   onToggleSidebar={() => {
     const newState = !collapsed;
-
     setCollapsed(newState);
     localStorage.setItem("sidebar", newState);
   }}
 />
 
-          <div style={{ padding: 20 }}>
-            <Routes>
+{/* Content */}
+<div
+  style={{
+    paddingTop: 70, // 🔥 أهم سطر
+    marginLeft: isMobile ? 0 : (collapsed ? 0 : 260),
+    transition: "all 0.3s",
+  }}
+>
+  <div style={{ padding: 20 }}>
+    <Routes>
 
               {/* ===== Dashboard ===== */}
               <Route path="/" element={<Navigate to="/dashboard" />} />
@@ -180,7 +176,7 @@
               {/* ===== Sales ===== */}
               <Route path="/invoice" element={<Invoice />} />
               <Route path="/sales-invoices" element={<SalesInvoices />} />
-              <Route path="/sales-invoice/:index" element={<SalesInvoiceDetails />} />
+              <Route path="/sales-invoice/:id" element={<Invoice />} />
               <Route path="/sales-return" element={<SalesReturn />} />
               <Route path="/customer-ledger" element={<CustomerLedger />} />
               <Route path="/customer-total-balances" element={<CustomerTotalBalances />} />
@@ -193,6 +189,7 @@
               <Route path="/item-movement-report" element={<ItemMovementReport />} />
               <Route path="/stock-report" element={<StockReport />} />
               <Route path="/profit-report" element={<ProfitReport />} />
+              <Route path="/item-movement-summary" element={<ItemMovementSummary />} />
 
               {/* ===== Global ===== */}
               <Route path="/global-search" element={<GlobalSearchPage />} />
@@ -220,7 +217,21 @@
   /* ======================= */
 
   function App() {
-    const { user } = useAuth();
+  const { user } = useAuth();
+
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("darkMode") === "true"
+  );
+
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+
+    localStorage.setItem("darkMode", darkMode);
+  }, [darkMode]);
 
     return (
       <BrowserRouter>
@@ -253,7 +264,7 @@
             element={
               user ? (
                 <PrivateRoute>
-                  <MainLayout />
+                  <MainLayout darkMode={darkMode} setDarkMode={setDarkMode} />
                 </PrivateRoute>
               ) : (
                 <Login />

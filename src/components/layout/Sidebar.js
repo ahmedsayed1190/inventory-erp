@@ -66,7 +66,8 @@ return (
   width: isMobile ? 260 : (collapsed ? 80 : 260),
   position: "fixed",
   left: 0,
-  top: 0,
+ top:70,
+ bottom:0,
   zIndex: 9999,
 
   transform: isMobile
@@ -82,8 +83,6 @@ return (
 
   color: "#e2e8f0",
   padding: 18,
-
-  height: "100dvh",
 
   overflowY: "auto",
   WebkitOverflowScrolling: "touch",
@@ -208,24 +207,6 @@ return (
 </NavLink>
   </>
 )}
-{/* ================= المصروفات ================= */}
-<div
-  style={sectionTitle}
-  onClick={() => toggleSection("expenses")}
-  {...sectionHover}
->
-  <span>💸 {t("sidebar.expenses")}</span>
-  <span style={arrowStyle("expenses")}>▸</span>
-</div>
-
-{openSection === "expenses" && (
-  <>
-
-   <NavLink to="/lists/expenses" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
-  📋 {t("sidebarLinks.expensesList")}
-</NavLink>
-  </>
-)}
 
 {/* ================= الخزينة ================= */}
 <div
@@ -280,6 +261,19 @@ return (
   🔄 {t("sidebarLinks.itemMovement")}
 </NavLink>
 
+<NavLink
+  to="/item-movement-summary"
+  className={({ isActive }) =>
+    isActive ? "active-link link" : "link"
+  }
+  ref={(el) => {
+    if (el && el.classList.contains("active-link")) {
+      setIndicatorTop(el.offsetTop);
+    }
+  }}
+>
+  📊 {t("sidebarLinks.itemMovementSummary")}
+</NavLink>
 <NavLink to="/stock-report" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   📦 {t("sidebarLinks.stockReport")}
 </NavLink>
@@ -316,6 +310,10 @@ return (
 
 <NavLink to="/lists/revenues" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
   💰 {t("sidebarLinks.revenuesList")}
+</NavLink>
+
+ <NavLink to="/lists/expenses" className={({ isActive }) => isActive ? "active-link link" : "link"} ref={(el)=>{if(el && el.classList.contains("active-link")) setIndicatorTop(el.offsetTop);}}>
+  📋 {t("sidebarLinks.expensesList")}
 </NavLink>
   </>
 )}

@@ -1,12 +1,17 @@
-  import { useState, useMemo } from "react";
-  import { useWarehouses } from "../context/WarehouseContext";
+import { useState, useMemo } from "react";
+import { useWarehouses } from "../context/WarehouseContext";
 
-  function StockReport() {
+
+function StockReport() {
 
   const { warehouses } = useWarehouses();
+  const items = JSON.parse(localStorage.getItem("items")) || [];
 
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [searchItem, setSearchItem] = useState("");
+  const [searchCode, setSearchCode] = useState("");
+  const [showNameDropdown, setShowNameDropdown] = useState(false);
+const [showCodeDropdown, setShowCodeDropdown] = useState(false);
 
   const today = new Date();
   const lastMonth = new Date();
@@ -17,270 +22,375 @@
 
   const reportData = useMemo(()=>{
 
-  const items = JSON.parse(localStorage.getItem("items")) || [];
-  const purchases = JSON.parse(localStorage.getItem("purchaseInvoices")) || [];
-  const purchaseReturns = JSON.parse(localStorage.getItem("purchaseReturns")) || [];
-  const sales = JSON.parse(localStorage.getItem("salesInvoices")) || [];
-  const salesReturns = JSON.parse(localStorage.getItem("salesReturns")) || [];
+    const items = JSON.parse(localStorage.getItem("items")) || [];
+    const purchases = JSON.parse(localStorage.getItem("purchaseInvoices")) || [];
+    const purchaseReturns = JSON.parse(localStorage.getItem("purchaseReturns")) || [];
+    const sales = JSON.parse(localStorage.getItem("salesInvoices")) || [];
+    const salesReturns = JSON.parse(localStorage.getItem("salesReturns")) || [];
 
-  let rows = [];
+    let rows = [];
 
-  items.forEach(item=>{
+    items.forEach(item=>{
 
-  if(searchItem && !item.name.toLowerCase().includes(searchItem.toLowerCase())) return;
+      if (
+  (searchItem && !item.name.toLowerCase().includes(searchItem.toLowerCase())) ||
+  (searchCode && !String(item.code).includes(searchCode))
+) return;
 
-  let currentQty = 0;
-let purchaseQty = 0;
-let purchaseReturnQty = 0;
-let salesQty = 0;
-let salesReturnQty = 0;
+      let purchaseQty = 0;
+      let purchaseReturnQty = 0;
+      let salesQty = 0;
+      let salesReturnQty = 0;
+      let opening = 0;
 
-/* الرصيد الحالي من المخزن */
-Object.entries(item.warehouses || {}).forEach(([wh,qty])=>{
+      /* ===== رصيد أول المدة ===== */
 
-if(selectedWarehouse && wh !== selectedWarehouse) return;
+      Object.entries(item.openingQty || {}).forEach(([wh, qty]) => {
+        if (selectedWarehouse && String(wh) !== String(selectedWarehouse)) return;
+        opening += Number(qty);
+      });
 
-currentQty += Number(qty);
+      /* ===== قبل الفترة ===== */
 
-});
+      purchases.forEach(inv => {
+        const d = new Date(inv.date);
+        if (d >= new Date(fromDate)) return;
+        if (
+  selectedWarehouse &&
+  String(inv.warehouse || inv.warehouseId) !== String(selectedWarehouse)
+) return;
 
-  purchases.forEach(inv=>{
+        inv.items?.forEach(it => {
+          if (it.code === item.code) opening += Number(it.qty);
+        });
+      });
 
-  const d = new Date(inv.date);
-  if(d < new Date(fromDate) || d > new Date(toDate)) return;
+      purchaseReturns.forEach(ret => {
+        const d = new Date(ret.date);
+        if (d >= new Date(fromDate)) return;
+        if (selectedWarehouse && String(ret.warehouseId) !== String(selectedWarehouse)) return;
 
-  inv.items?.forEach(it=>{
+        ret.items?.forEach(it => {
+          if (it.code === item.code) opening -= Number(it.qty);
+        });
+      });
 
-  if(it.code === item.code){
+      sales.forEach(inv => {
+        const d = new Date(inv.date);
+        if (d >= new Date(fromDate)) return;
+        if (selectedWarehouse && String(inv.warehouse) !== String(selectedWarehouse)) return;
 
-  if(!selectedWarehouse || inv.warehouse === selectedWarehouse){
+        inv.items?.forEach(it => {
+          if (it.code === item.code) opening -= Number(it.qty);
+        });
+      });
 
-  purchaseQty += Number(it.qty);
+      salesReturns.forEach(ret => {
+        const d = new Date(ret.date);
+        if (d >= new Date(fromDate)) return;
+        if (selectedWarehouse && String(ret.warehouseId) !== String(selectedWarehouse)) return;
 
-  }
+        ret.items?.forEach(it => {
+          if (it.code === item.code) opening += Number(it.qty);
+        });
+      });
 
-  }
+      /* ===== خلال الفترة ===== */
 
-  });
+      purchases.forEach(inv=>{
+        const d = new Date(inv.date);
+        if(d < new Date(fromDate) || d > new Date(toDate)) return;
+        if (
+  selectedWarehouse &&
+  String(inv.warehouse || inv.warehouseId) !== String(selectedWarehouse)
+) return;
 
-  });
+        inv.items?.forEach(it=>{
+          if(it.code === item.code){
+            purchaseQty += Number(it.qty);
+          }
+        });
+      });
 
-  purchaseReturns.forEach(ret=>{
+      purchaseReturns.forEach(ret=>{
+        const d = new Date(ret.date);
+        if(d < new Date(fromDate) || d > new Date(toDate)) return;
+        if(selectedWarehouse && String(ret.warehouseId) !== String(selectedWarehouse)) return;
 
-  const d = new Date(ret.date);
-  if(d < new Date(fromDate) || d > new Date(toDate)) return;
+        ret.items?.forEach(it=>{
+          if(it.code === item.code){
+            purchaseReturnQty += Number(it.qty);
+          }
+        });
+      });
 
-  ret.items?.forEach(it=>{
+      sales.forEach(inv=>{
+        const d = new Date(inv.date);
+        if(d < new Date(fromDate) || d > new Date(toDate)) return;
+        if (selectedWarehouse && String(inv.warehouse) !== String(selectedWarehouse)) return;
 
-  if(it.code === item.code){
+        inv.items?.forEach(it=>{
+          if(it.code === item.code){
+            salesQty += Number(it.qty);
+          }
+        });
+      });
 
-  purchaseReturnQty += Number(it.qty);
+      salesReturns.forEach(ret=>{
+        const d = new Date(ret.date);
+        if(d < new Date(fromDate) || d > new Date(toDate)) return;
+        if(selectedWarehouse && String(ret.warehouseId) !== String(selectedWarehouse)) return;
 
-  }
+        ret.items?.forEach(it=>{
+          if(it.code === item.code){
+            salesReturnQty += Number(it.qty);
+          }
+        });
+      });
 
-  });
+      /* ===== الرصيد ===== */
 
-  });
+      const balance =
+        opening + purchaseQty - purchaseReturnQty - salesQty + salesReturnQty;
 
-  sales.forEach(inv=>{
+      const warehouseName =
+        selectedWarehouse
+          ? warehouses.find(w => String(w.id) === String(selectedWarehouse))?.name
+          : "كل المخازن";
 
-  const d = new Date(inv.date);
-  if(d < new Date(fromDate) || d > new Date(toDate)) return;
+      rows.push({
+        code: item.code,
+        name: item.name,
+        warehouse: warehouseName,
+        opening,
+        purchaseQty,
+        purchaseReturnQty,
+        salesQty,
+        salesReturnQty,
+        balance,
+        value: balance * Number(item.costPrice || 0)
+      });
 
-  inv.items?.forEach(it=>{
+    });
 
-  if(it.code === item.code){
+    return rows;
 
-  if(!selectedWarehouse || inv.warehouse === selectedWarehouse){
+  }, [selectedWarehouse,searchItem,searchCode,fromDate,toDate,warehouses]);
 
-  salesQty += Number(it.qty);
-
-  }
-
-  }
-
-  });
-
-  });
-
-  salesReturns.forEach(ret=>{
-
-  const d = new Date(ret.date);
-  if(d < new Date(fromDate) || d > new Date(toDate)) return;
-
-  const qty = ret.items?.[item.code];
-
-  if(qty) salesReturnQty += Number(qty);
-
-  });
-  /* صافي الحركة */
-const netMovement =
-purchaseQty - purchaseReturnQty - salesQty + salesReturnQty;
-
-/* رصيد أول المدة الحقيقي */
-const opening = currentQty - netMovement;
-
-/* الرصيد النهائي */
-const balance = currentQty;
-
-const warehouseName =
-selectedWarehouse
-? warehouses.find(w => String(w.id) === String(selectedWarehouse))?.name
-: "كل المخازن";
-
-rows.push({
-code: item.code,
-name: item.name,
-warehouse: warehouseName,
-opening,
-purchaseQty,
-purchaseReturnQty,
-salesQty,
-salesReturnQty,
-balance,
-value: balance * Number(item.costPrice || 0)
-});
-
-
-  });
-
-  return rows;
-
-},[selectedWarehouse,searchItem,fromDate,toDate,warehouses]);
   const totalQty = reportData.reduce((s,r)=> s + r.balance ,0);
   const totalValue = reportData.reduce((s,r)=> s + r.value ,0);
 
   return (
+    <div className="container">
 
-  <div className="container">
+      <h3 className="mb-4">📦 تقرير كميات الأصناف</h3>
 
-  <h3 className="mb-4">📦 تقرير كميات الأصناف</h3>
+      <div className="card mb-3">
+       <div className="card-body row g-2">
 
-  <div className="card mb-3">
-  <div className="card-body row g-2">
-
-  <div className="col-md-3">
-
-  <select
-  className="form-select"
-  value={selectedWarehouse}
-  onChange={e=>setSelectedWarehouse(e.target.value)}
-  >
-
-  <option value="">كل المخازن</option>
-
-  {warehouses.map(w=>(
-  <option key={w.id} value={w.id}>
-  {w.name}
-  </option>
-  ))}
-
-  </select>
-
+  <div className="col-md-2">
+    <select
+      className="form-select"
+      value={selectedWarehouse}
+      onChange={e=>setSelectedWarehouse(e.target.value)}
+    >
+      <option value="">كل المخازن</option>
+      {warehouses.map(w=>(
+        <option key={w.id} value={String(w.id)}>
+          {w.name}
+        </option>
+      ))}
+    </select>
   </div>
 
-  <div className="col-md-3">
+  <div className="col-md-2 position-relative">
 
   <input
-  className="form-control"
-  placeholder="بحث بالصنف"
-  value={searchItem}
-  onChange={e=>setSearchItem(e.target.value)}
+    className="form-control"
+    placeholder="بحث بالاسم"
+    value={searchItem}
+    onChange={(e) => {
+      setSearchItem(e.target.value);
+      setShowNameDropdown(true);
+setShowCodeDropdown(false);
+    }}
   />
 
-  </div>
+  {showNameDropdown && searchItem && (
+    <div
+      style={{
+        position: "absolute",
+        background: "#0f172a",
+        color: "#fff",
+        border: "1px solid #334155",
+        width: "100%",
+        maxHeight: "200px",
+        overflowY: "auto",
+        zIndex: 999
+      }}
+    >
 
-  <div className="col-md-3">
+      {items
+        .filter(i =>
+          i.name.toLowerCase().includes(searchItem.toLowerCase())
+        )
+        .map(i => (
 
-  <input
-  type="date"
-  className="form-control"
-  value={fromDate}
-  onChange={e=>setFromDate(e.target.value)}
-  />
+          <div
+            key={i.code}
+            style={{
+              padding: "6px",
+              cursor: "pointer"
+            }}
+            onClick={() => {
+              setSearchItem(i.name);
+              setSearchCode(i.code);
+              setShowNameDropdown(false); // 🔥 يقفل
+            }}
+          >
+            {i.code} - {i.name}
+          </div>
 
-  </div>
+        ))}
 
-  <div className="col-md-3">
-
-  <input
-  type="date"
-  className="form-control"
-  value={toDate}
-  onChange={e=>setToDate(e.target.value)}
-  />
-
-  </div>
-
-  </div>
-  </div>
-
-  <table className="table table-bordered table-striped">
-
-  <thead className="table-dark">
-
-  <tr>
-  <th>الكود</th>
-  <th>الصنف</th>
-  <th>المخزن</th>
-  <th>رصيد أول</th>
-  <th>المشتريات</th>
-  <th>مرتجع شراء</th>
-  <th>المبيعات</th>
-  <th>مرتجع بيع</th>
-  <th>الرصيد</th>
-  <th>قيمة المخزون</th>
-  </tr>
-
-  </thead>
-
-  <tbody>
-
-  {reportData.length === 0 && (
-  <tr>
-  <td colSpan="10" className="text-center">
-  لا توجد بيانات
-  </td>
-  </tr>
+    </div>
   )}
 
-  {reportData.map((r,i)=>(
-  <tr key={i}>
+</div>
 
-  <td>{r.code}</td>
-  <td>{r.name}</td>
-  <td>{r.warehouse}</td>
-  <td>{r.opening}</td>
-  <td>{r.purchaseQty}</td>
-  <td>{r.purchaseReturnQty}</td>
-  <td>{r.salesQty}</td>
-  <td>{r.salesReturnQty}</td>
-  <td style={{fontWeight:"bold"}}>{r.balance}</td>
-  <td>{r.value}</td>
+  <div className="col-md-2 position-relative">
 
-  </tr>
-  ))}
+  <input
+    className="form-control"
+    placeholder="بحث بالكود"
+    value={searchCode}
+    onChange={(e) => {
+      setSearchCode(e.target.value);
+      setSearchItem("");
+      setShowCodeDropdown(true);
+setShowNameDropdown(false);
+    }}
+  />
 
-  </tbody>
+  {showCodeDropdown && searchCode && (
+    <div
+      style={{
+        position: "absolute",
+        background: "#0f172a",
+        color: "#fff",
+        border: "1px solid #334155",
+        width: "100%",
+        maxHeight: "200px",
+        overflowY: "auto",
+        zIndex: 999
+      }}
+    >
 
-  <tfoot className="table-light">
+      {items
+        .filter(i =>
+          String(i.code).includes(searchCode)
+        )
+        .map(i => (
 
-  <tr>
+          <div
+            key={i.code}
+            style={{
+              padding: "6px",
+              cursor: "pointer"
+            }}
+            onClick={() => {
+  setSearchCode(i.code);
+  setSearchItem(i.name);
+  setShowCodeDropdown(false); // ✅ الصح
+}}
+          >
+            {i.code} - {i.name}
+          </div>
 
-  <th colSpan="8">الإجمالي</th>
-  <th>{totalQty}</th>
-  <th>{totalValue}</th>
+        ))}
 
-  </tr>
+    </div>
+  )}
 
-  </tfoot>
+</div>
 
-  </table>
-
+  <div className="col-md-3">
+    <input
+      type="date"
+      className="form-control"
+      value={fromDate}
+      onChange={e=>setFromDate(e.target.value)}
+    />
   </div>
 
+  <div className="col-md-3">
+    <input
+      type="date"
+      className="form-control"
+      value={toDate}
+      onChange={e=>setToDate(e.target.value)}
+    />
+  </div>
+
+</div>
+      </div>
+
+      <table className="table table-bordered table-striped">
+
+        <thead className="table-dark">
+          <tr>
+            <th>الكود</th>
+            <th>الصنف</th>
+            <th>المخزن</th>
+            <th>رصيد أول</th>
+            <th>المشتريات</th>
+            <th>مرتجع شراء</th>
+            <th>المبيعات</th>
+            <th>مرتجع بيع</th>
+            <th>الرصيد</th>
+            <th>قيمة المخزون</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {reportData.length === 0 && (
+            <tr>
+              <td colSpan="10" className="text-center">
+                لا توجد بيانات
+              </td>
+            </tr>
+          )}
+
+          {reportData.map((r,i)=>(
+            <tr key={i}>
+              <td>{r.code}</td>
+              <td>{r.name}</td>
+              <td>{r.warehouse}</td>
+              <td>{r.opening}</td>
+              <td>{r.purchaseQty}</td>
+              <td>{r.purchaseReturnQty}</td>
+              <td>{r.salesQty}</td>
+              <td>{r.salesReturnQty}</td>
+              <td style={{fontWeight:"bold"}}>{r.balance}</td>
+              <td>{r.value}</td>
+            </tr>
+          ))}
+
+        </tbody>
+
+        <tfoot className="table-light">
+          <tr>
+            <th colSpan="8">الإجمالي</th>
+            <th>{totalQty}</th>
+            <th>{totalValue}</th>
+          </tr>
+        </tfoot>
+
+      </table>
+
+    </div>
   );
+}
 
-  }
-
-  export default StockReport;
+export default StockReport;

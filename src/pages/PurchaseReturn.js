@@ -136,29 +136,36 @@ JSON.stringify([...purchaseReturns,newReturn])
 
 /* ===== تحديث المخزون ===== */
 
-const stockMovements =
+let stockMovements =
 JSON.parse(localStorage.getItem("stockMovements")) || [];
 
-returnItems.forEach(i=>{
+returnItems.forEach(i => {
 
-stockMovements.push({
+  stockMovements.push({
+    id: Date.now() + Math.random(),
 
-id:Date.now()+Math.random(),
+    date: date,
 
-date,
+    code: i.code,                // ✅ مهم
+    warehouse: warehouseId,      // ✅ مهم
 
-itemCode:i.code,
-itemName:i.name,
+    type: "purchase_return",
+    description: "مرتجع مشتريات",
 
-warehouseId,
+    party: selectedSupplier.name,
 
-qty:i.qty,
+    in: 0,                       // ❌ مفيش وارد
+    out: Number(i.qty),          // ✅ منصرف
 
-type:"purchaseReturn"
+    reference: "purchase_return"
+  });
 
 });
 
-});
+localStorage.setItem(
+  "stockMovements",
+  JSON.stringify(stockMovements)
+);
 
 localStorage.setItem(
 "stockMovements",

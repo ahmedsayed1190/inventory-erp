@@ -1,0 +1,206 @@
+/* ===== BACKGROUND ===== */
+
+body.dark-mode {
+  background: #020617;
+  color: #e2e8f0;
+}
+
+/* ===== CARDS ===== */
+
+body.dark-mode .card,
+body.dark-mode .glass-card {
+  background: rgba(15, 23, 42, 0.85) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e2e8f0;
+  border-radius: 12px;
+}
+
+/* ===== HEADINGS ===== */
+
+h1, h2, h3, h4, h5, h6 {
+  color: #f1f5f9;
+}
+
+/* ===== INPUTS ===== */
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: #020617 !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* ===== TABLE ===== */
+
+.table {
+  color: #e2e8f0;
+}
+
+.table thead {
+  background: #020617;
+}
+
+.table tbody tr {
+  background: rgba(255,255,255,0.02);
+}
+
+.table tbody tr:hover {
+  background: rgba(59,130,246,0.1);
+}
+
+/* ===== BUTTONS ===== */
+
+.btn {
+  border-radius: 8px;
+}
+
+.btn-success {
+  background: #22c55e;
+  border: none;
+}
+
+.btn-danger {
+  background: #ef4444;
+  border: none;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  border: none;
+}
+
+/* ===== ALERT ===== */
+
+.alert {
+  background: rgba(234,179,8,0.15);
+  border: 1px solid rgba(234,179,8,0.3);
+  color: #fde68a;
+}
+
+/* ===== SIDEBAR ===== */
+
+.sidebar {
+  background: rgba(15,23,42,0.9);
+}
+
+/* ===== LINKS ===== */
+
+.link {
+  color: #cbd5e1;
+}
+
+.active-link {
+  background: rgba(59,130,246,0.15);
+  color: #3b82f6;
+}
+
+/* ===== SCROLL ===== */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 6px;
+}
+/* ===== Dropdown (Select Options) ===== */
+
+select {
+  background: #020617 !important;
+  color: #e2e8f0 !important;
+}
+
+/* القائمة نفسها لما تتفتح */
+select option {
+  background: #020617 !important;
+  color: #e2e8f0 !important;
+}
+
+/* Hover على الاختيارات */
+select option:hover {
+  background: #1e293b !important;
+}
+
+/* ===== لو عندك datalist (autocomplete) ===== */
+
+input[list] {
+  color: #e2e8f0 !important;
+  background: #020617 !important;
+}
+body.dark-mode {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+.dark-mode .invoice-table {
+  background: #020617;
+  border: 1px solid #334155;
+}
+/* ===== FIX FINAL TABLE ===== */
+
+.dark-mode .invoice-table {
+  background: #020617 !important;
+  color: #e2e8f0 !important;
+}
+
+/* الخلايا */
+.dark-mode .invoice-table td {
+  color: #e2e8f0 !important;
+  background: #020617 !important;
+}
+
+/* الهيدر */
+.dark-mode .invoice-table thead {
+  background: #020617 !important;
+}
+
+.dark-mode .invoice-table th {
+  color: #ffffff !important;
+  background: #020617 !important;
+}
+
+/* الصفوف */
+.dark-mode .invoice-table tbody tr {
+  background: #020617 !important;
+}
+
+/* hover */
+.dark-mode .invoice-table tbody tr:hover {
+  background: rgba(59,130,246,0.15) !important;
+}
+
+/* الفوتر */
+.dark-mode .invoice-table tfoot td {
+  color: #e2e8f0 !important;
+  background: #020617 !important;
+}
+
+/* أرقام المنصرف (أحمر) */
+.dark-mode .text-danger {
+  color: #ef4444 !important;
+}
+/* ===== FIX PLACEHOLDER ===== */
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #94a3b8 !important; /* لون أوضح */
+  opacity: 1;
+}
+
+/* لو Bootstrap */
+body.dark-mode .form-control::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* select مش محتاج placeholder لكن للتأكيد */
+body.dark-mode select {
+  color: #e2e8f0 !important;
+}

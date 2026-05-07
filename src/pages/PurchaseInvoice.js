@@ -1,7 +1,10 @@
 import { useState } from "react";
 function PurchaseInvoice(){
-
+const editData =
+  JSON.parse(localStorage.getItem("editPurchaseInvoice"));
 const today = new Date().toISOString().slice(0,10);
+const mode = localStorage.getItem("mode");
+const isView = mode === "view";
 
 /* ===== DATA ===== */
 
@@ -34,14 +37,15 @@ return `PI-${max + 1}`;
 
 };
 
-const invoiceNumber = getNextInvoiceNumber();
+const invoiceNumber = editData?.invoiceNumber || getNextInvoiceNumber();
 
 /* ===== HEADER ===== */
 
-const [date,setDate] = useState(today);
-const [supplierId,setSupplierId] = useState("");
-const [warehouseId,setWarehouseId] = useState("");
-const [paymentType,setPaymentType] = useState("credit");
+const [date,setDate] = useState(editData?.date || today);
+const [supplierId,setSupplierId] = useState(editData?.supplierId || "");
+const [warehouseId,setWarehouseId] = useState(editData?.warehouseId || "");
+const [paymentType,setPaymentType] = useState(editData?.paymentType || "credit");
+const [invoiceItems,setInvoiceItems] = useState(editData?.items || []);
 
 
 /* ===== ITEM INPUT ===== */
@@ -51,9 +55,6 @@ const [qty,setQty] = useState("");
 const [price,setPrice] = useState("");
 
 
-/* ===== TABLE ===== */
-
-const [invoiceItems,setInvoiceItems] = useState([]);
 
 
 /* ===== المورد ===== */
@@ -91,7 +92,7 @@ const newItem = {
 code:selectedItem.code,
 name:selectedItem.name,
 unit:selectedItem.unit || "",
-warehouse:warehouseId,
+warehouse: warehouseId,
 
 qty:Number(qty),
 price:Number(price),
@@ -128,143 +129,176 @@ const total = invoiceItems.reduce(
 
 
 /* ===== حفظ الفاتورة ===== */
-
-const saveInvoice = ()=>{
-
-if(!supplierId){
-alert("اختر المورد");
-return;
-}
-
-if(invoiceItems.length===0){
-alert("لا توجد أصناف");
-return;
-}
-
-const purchaseInvoices =
-JSON.parse(localStorage.getItem("purchaseInvoices")) || [];
-
-const newInvoice = {
-
-id:Date.now(),
-
-invoiceNumber:invoiceNumber,
-
-supplierId,
-supplierName:selectedSupplier.name,
-
-date,
-warehouseId,
-
-paymentType,
-
-items:invoiceItems,
-
-total
-
-};
-
-localStorage.setItem(
-"purchaseInvoices",
-JSON.stringify([...purchaseInvoices,newInvoice])
-);
+const isEdit = !!editData;
 
 
 /* ===== تحديث المخزون ===== */
 
-const stockMovements =
-JSON.parse(localStorage.getItem("stockMovements")) || [];
+const saveInvoice = ()=>{
 
-invoiceItems.forEach(i=>{
+  if(!supplierId){
+    alert("اختر المورد");
+    return;
+  }
 
-stockMovements.push({
+  if(invoiceItems.length===0){
+    alert("لا توجد أصناف");
+    return;
+  }
 
-id:Date.now()+Math.random(),
+  let purchaseInvoices =
+    JSON.parse(localStorage.getItem("purchaseInvoices")) || [];
 
-date,
+  let stockMovements =
+    JSON.parse(localStorage.getItem("stockMovements")) || [];
 
-itemCode:i.code,
-itemName:i.name,
+  const supplierLedger =
+    JSON.parse(localStorage.getItem("supplierLedger")) || [];
 
-warehouseId,
 
-qty:i.qty,
+  /* ===== تعديل أو إنشاء ===== */
+  if(isEdit){
 
-type:"purchase"
+    purchaseInvoices = purchaseInvoices.map(inv =>
+      inv.id === editData.id
+        ? {
+            ...inv,
+            supplierId,
+            supplierName:selectedSupplier.name,
+            date,
+            warehouseId,
+            paymentType,
+            items:invoiceItems,
+            total
+          }
+        : inv
+    );
+
+    // حذف الحركات القديمة
+    stockMovements = stockMovements.filter(
+      m => m.reference !== editData.invoiceNumber
+    );
+
+  } else {
+
+    const newInvoice = {
+      id:Date.now(),
+      invoiceNumber,
+      supplierId,
+      supplierName:selectedSupplier.name,
+      date,
+      warehouseId,
+      paymentType,
+      items:invoiceItems,
+      total
+    };
+
+    purchaseInvoices.push(newInvoice);
+  }
+
+  /* ===== تحديث رصيد الصنف ===== */
+
+let itemsData =
+  JSON.parse(localStorage.getItem("items")) || [];
+
+invoiceItems.forEach(i => {
+
+  const itemIndex = itemsData.findIndex(
+    item => item.code === i.code
+  );
+
+  if(itemIndex !== -1){
+
+    if(!itemsData[itemIndex].warehouses){
+      itemsData[itemIndex].warehouses = {};
+    }
+
+    if(!itemsData[itemIndex].warehouses[warehouseId]){
+      itemsData[itemIndex].warehouses[warehouseId] = 0;
+    }
+
+    itemsData[itemIndex].warehouses[warehouseId] += Number(i.qty);
+
+// ✅ حفظ آخر سعر شراء
+itemsData[itemIndex].purchasePrice = Number(i.price);
+  }
 
 });
 
-});
+localStorage.setItem("items", JSON.stringify(itemsData));
 
-localStorage.setItem(
-"stockMovements",
-JSON.stringify(stockMovements)
-);
+  /* ===== حركة المخزون ===== */
+  invoiceItems.forEach(i => {
+    stockMovements.push({
+      
+      id: Date.now() + Math.random(),
+      date: date,
+      code: i.code,
+      warehouse: warehouseId,
+      type: "purchase",
+      description: "فاتورة مشتريات",
+      party: selectedSupplier.name,
+      in: Number(i.qty),
+      out: 0,
+      reference: invoiceNumber
+    });
+  });
 
+  /* ===== حساب المورد ===== */
+  supplierLedger.push({
+    id:Date.now(),
+    supplierId,
+    supplierName:selectedSupplier.name,
+    date,
+    description:"فاتورة شراء",
+    debit:total,
+    credit:0
+  });
 
-/* ===== تحديث حساب المورد ===== */
+  /* ===== كاش ===== */
+  if(paymentType==="cash"){
 
-const supplierLedger =
-JSON.parse(localStorage.getItem("supplierLedger")) || [];
+    const cashTransactions =
+      JSON.parse(localStorage.getItem("cashTransactions")) || [];
 
-supplierLedger.push({
+    cashTransactions.push({
+      id:Date.now(),
+      type:"out",
+      operationType:"supplierPayment",
+      supplierName:selectedSupplier.name,
+      amount:total,
+      date
+    });
 
-id:Date.now(),
+    localStorage.setItem(
+      "cashTransactions",
+      JSON.stringify(cashTransactions)
+    );
+  }
 
-supplierId,
-supplierName:selectedSupplier.name,
+  /* ===== حفظ ===== */
+  localStorage.setItem(
+    "purchaseInvoices",
+    JSON.stringify(purchaseInvoices)
+  );
 
-date,
+  localStorage.setItem(
+    "stockMovements",
+    JSON.stringify(stockMovements)
+  );
 
-description:"فاتورة شراء",
+  localStorage.setItem(
+    "supplierLedger",
+    JSON.stringify(supplierLedger)
+  );
 
-debit:total,
-credit:0
+  alert(isEdit ? "تم تعديل الفاتورة ✅" : "تم حفظ الفاتورة ✅");
 
-});
+ localStorage.removeItem("editPurchaseInvoice");
+localStorage.removeItem("mode");
 
-localStorage.setItem(
-"supplierLedger",
-JSON.stringify(supplierLedger)
-);
-
-
-/* ===== لو الدفع كاش ===== */
-
-if(paymentType==="cash"){
-
-const cashTransactions =
-JSON.parse(localStorage.getItem("cashTransactions")) || [];
-
-cashTransactions.push({
-
-id:Date.now(),
-
-type:"out",
-
-operationType:"supplierPayment",
-
-supplierName:selectedSupplier.name,
-
-amount:total,
-
-date
-
-});
-
-localStorage.setItem(
-"cashTransactions",
-JSON.stringify(cashTransactions)
-);
-
-}
-
-alert("تم حفظ الفاتورة ✅");
-
-setInvoiceItems([]);
-
+  setInvoiceItems([]);
 };
-
 
 /* ===== UI ===== */
 
@@ -293,17 +327,23 @@ Purchase Invoice #{invoiceNumber}
 
 <button
 className="btn btn-success"
-onClick={()=>window.location.reload()}
+onClick={()=>{
+  localStorage.removeItem("editPurchaseInvoice");
+  localStorage.removeItem("mode");
+  window.location.reload();
+}}
 >
 + New Invoice
 </button>
 
-<button
-className="btn btn-primary"
-onClick={saveInvoice}
->
-💾 Save Invoice
-</button>
+{!isView && (
+  <button
+    className="btn btn-primary"
+    onClick={saveInvoice}
+  >
+    💾 Save Invoice
+  </button>
+)}
 
 <button className="btn btn-danger">
 🗑 Delete Invoice
@@ -317,10 +357,11 @@ onClick={saveInvoice}
 <label>Invoice Date</label>
 
 <input
-type="date"
-className="form-control"
-value={date}
-onChange={(e)=>setDate(e.target.value)}
+  type="date"
+  className="form-control"
+  value={date}
+  onChange={(e)=>setDate(e.target.value)}
+  disabled={isView}
 />
 
 </div>
@@ -356,6 +397,7 @@ defaultValue={new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digi
 className="form-select"
 value={supplierId}
 onChange={(e)=>setSupplierId(e.target.value)}
+disabled={isView}
 >
 
 <option value="">اختر المورد</option>
@@ -394,6 +436,7 @@ disabled
 className="form-select"
 value={paymentType}
 onChange={(e)=>setPaymentType(e.target.value)}
+disabled={isView}
 >
 
 <option value="credit">آجل</option>
@@ -412,6 +455,7 @@ onChange={(e)=>setPaymentType(e.target.value)}
 className="form-select"
 value={warehouseId}
 onChange={(e)=>setWarehouseId(e.target.value)}
+disabled={isView}
 >
 
 <option value="">اختر المخزن</option>
@@ -450,12 +494,29 @@ onChange={(e)=>setWarehouseId(e.target.value)}
 <label>الصنف</label>
 
 <select
-className="form-select"
-value={itemCode}
-onChange={(e)=>setItemCode(e.target.value)}
-disabled={!warehouseId}
->
+  className="form-select"
+  value={itemCode}
+  onChange={(e) => {
 
+    const code = e.target.value;
+
+    setItemCode(code);
+
+    // ✅ هات الصنف المختار
+    const item = items.find(
+      i => String(i.code) === String(code)
+    );
+
+    // ✅ حط آخر سعر شراء تلقائي
+    if (item) {
+  setPrice(
+    item.purchasePrice || item.costPrice || ""
+  );
+}
+
+  }}
+  disabled={!warehouseId || isView}
+>
 <option value="">
 {warehouseId ? "اختر الصنف" : "اختر المخزن أولاً"}
 </option>
@@ -491,10 +552,12 @@ disabled
 <label>الكمية</label>
 
 <input
-type="number"
+type="text"
+inputMode="numeric"
 className="form-control"
 value={qty}
 onChange={(e)=>setQty(e.target.value)}
+disabled={isView}
 />
 
 </div>
@@ -505,12 +568,13 @@ onChange={(e)=>setQty(e.target.value)}
 <label>سعر الشراء</label>
 
 <input
-type="number"
+type="text"
+inputMode="numeric"
 className="form-control"
 value={price}
 onChange={(e)=>setPrice(e.target.value)}
+disabled={isView}
 />
-
 </div>
 
 
@@ -519,6 +583,7 @@ onChange={(e)=>setPrice(e.target.value)}
 <button
 className="btn btn-success w-100"
 onClick={addItem}
+disabled={isView}
 >
 
 ➕ إضافة
@@ -586,6 +651,7 @@ onClick={addItem}
 <button
 className="btn btn-danger btn-sm"
 onClick={()=>deleteItem(index)}
+disabled={isView}
 >
 
 ❌

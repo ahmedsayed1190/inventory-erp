@@ -5,8 +5,20 @@ function CustomerTotalBalances() {
 
   /* ===== STATES ===== */
   const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const today = new Date();
+
+// أول يوم في السنة
+const startOfYear = new Date(today.getFullYear(), 0, 1);
+
+// حل مشكلة التايم زون
+const formatDate = (date) =>
+  new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .slice(0,10);
+
+// الحالات
+const [fromDate, setFromDate] = useState(formatDate(startOfYear));
+const [toDate, setToDate] = useState(formatDate(today));
   const [sortByDebt, setSortByDebt] = useState(false);
 
   /* ===== DATA FROM LOCALSTORAGE (FIXED) ===== */
@@ -17,9 +29,7 @@ function CustomerTotalBalances() {
   const invoices = useMemo(() => {
     return JSON.parse(localStorage.getItem("salesInvoices")) || [];
   }, []);
-  const payments = useMemo(() => {
-  return JSON.parse(localStorage.getItem("customerPayments")) || [];
-}, []);
+  
 const cashTransactions = useMemo(() => {
   return JSON.parse(localStorage.getItem("cashTransactions")) || [];
 }, []);
@@ -34,7 +44,7 @@ let paymentBalance = 0;
 cashTransactions
 .filter(
 (t) =>
-t.operationType === "customerPayment" &&
+t.operationType !== "sales" && // 🔥 أهم سطر
 String(t.customerCode) === String(customer.customerNumber)
 )
 .forEach((t) => {
@@ -51,36 +61,32 @@ paymentBalance += Number(t.amount || 0);
 });
 /* الفواتير */
 invoices
-.filter((inv) => inv.customerCode === customer.customerNumber)
+  .filter((inv) => inv.customerCode === customer.customerNumber)
   .forEach((inv) => {
+
     const invDate = new Date(inv.date);
 
     if (
       (!fromDate || invDate >= new Date(fromDate)) &&
       (!toDate || invDate <= new Date(toDate + "T23:59:59"))
     ) {
-invoiceBalance += Number(inv.total || inv.subTotal || 0);    }
-  });
 
-/* التحصيلات */
-payments
-.filter((p) => String(p.customerCode) === String(customer.customerNumber))
-.forEach((p) => {
-    const payDate = new Date(p.date);
+     // ❌ تجاهل الكاش
+if (inv.paymentMethod === "cash") return;
 
-    if (
-      (!fromDate || payDate >= new Date(fromDate)) &&
-      (!toDate || payDate <= new Date(toDate + "T23:59:59"))
-    ) {
-      paymentBalance += Number(p.amount || 0);
+// ✔️ الآجل + الشيك
+invoiceBalance += Number(inv.total || 0);
+
     }
+
   });
+
 
 const balance = invoiceBalance - paymentBalance;
 
       return { ...customer, filteredBalance: balance };
     });
-}, [customers, invoices, payments, cashTransactions, fromDate, toDate]);
+}, [customers, invoices, cashTransactions, fromDate, toDate]);
   /* ===== SEARCH ===== */
  
 

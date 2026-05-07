@@ -42,6 +42,7 @@ const today = new Date().toISOString().slice(0,10);
 
 const [fromDate,setFromDate] = useState("2026-01-01");
 const [toDate,setToDate] = useState(today);
+const [invoiceMode,setInvoiceMode] = useState("credit");
 
 /* ===== BUILD MOVEMENTS ===== */
 
@@ -71,6 +72,13 @@ warehouse:"-"
 
 purchaseInvoices
 .filter(i => String(i.supplierId) === String(supplierId))
+.filter(i=>{
+
+if(invoiceMode === "all") return true;
+
+return i.paymentType === "credit";
+
+})
 .forEach(i=>{
 
 const warehouseName =
@@ -106,12 +114,27 @@ credit:0
 });
 
 });
+/* ===== فواتير الآجل فقط ===== */
+
+const creditInvoiceNumbers = purchaseInvoices
+.filter(i => String(i.supplierId) === String(supplierId))
+.filter(i => i.paymentType === "credit")
+.map(i => i.invoiceNumber);
 
 /* ===== الدفع للمورد ===== */
 
 cashTransactions
 .filter(t => t.operationType === "supplierPayment")
 .filter(t => t.supplierName === supplier?.name)
+.filter(t=>{
+
+if(invoiceMode === "all") return true;
+
+/* الآجل فقط */
+
+return creditInvoiceNumbers.includes(t.invoiceNumber);
+
+})
 .forEach(t=>{
 
 rows.push({
@@ -230,6 +253,27 @@ onChange={(e)=>setToDate(e.target.value)}
 
 </div>
 
+<div className="col-md-2">
+
+<label>نوع الفواتير</label>
+
+<select
+className="form-select"
+value={invoiceMode}
+onChange={(e)=>setInvoiceMode(e.target.value)}
+>
+
+<option value="credit">
+الآجل فقط
+</option>
+
+<option value="all">
+الكاش والآجل
+</option>
+
+</select>
+
+</div>
 </div>
 
 </div>
@@ -242,8 +286,55 @@ onChange={(e)=>setToDate(e.target.value)}
 
 <div className="card-body">
 
-<table className="table table-bordered table-striped">
+<div className="row mb-3">
 
+<div className="col-md-3">
+
+<div className="border rounded p-2 bg-dark text-light">
+
+<div className="small text-secondary">
+الرصيد الافتتاحي
+</div>
+
+<div className="fw-bold">
+{
+Number(
+suppliers.find(
+s => String(s.id) === String(supplierId)
+)?.openingBalance || 0
+).toFixed(2)
+}
+</div>
+
+</div>
+
+</div>
+
+<div className="col-md-3">
+
+<div className="border rounded p-2 bg-dark text-light">
+
+<div className="small text-secondary">
+الرصيد الحالي
+</div>
+
+<div className="fw-bold text-warning">
+
+{
+finalRows.length > 0
+? finalRows[finalRows.length - 1].balance.toFixed(2)
+: "0.00"
+}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<table className="table table-bordered table-striped">
 <thead className="table-dark">
 
 <tr>

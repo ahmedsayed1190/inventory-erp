@@ -46,7 +46,8 @@ const allMovements = stockMovements.filter(
 m =>
 String(m.itemCode || m.code) === String(itemCode) &&
 (!warehouse || String(m.warehouse) === String(warehouse)) &&
-m.reference !== "opening"
+m.reference !== "opening" &&
+m.type !== "deleted" // 🔥 حماية إضافية
 );
 
 const movements = useMemo(() => {
@@ -121,8 +122,13 @@ className="form-control"
 placeholder="ابحث بالاسم أو الكود"
 value={itemSearch}
 onChange={(e) => {
-setItemSearch(e.target.value);
-setItemCode("");
+  setItemSearch(e.target.value);
+  setItemCode("");
+}}
+style={{
+  backgroundColor: "#0f172a",
+  color: "#fff",
+  border: "1px solid #334155"
 }}
 />
 
@@ -131,8 +137,9 @@ setItemCode("");
 <div
 style={{
 position: "absolute",
-background: "#fff",
-border: "1px solid #ddd",
+background: "#0f172a",
+color: "#fff",
+border: "1px solid #334155",
 width: "100%",
 maxHeight: "200px",
 overflowY: "auto",

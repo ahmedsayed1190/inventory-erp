@@ -5,13 +5,21 @@ function RevenuesList() {
   const [revenues, setRevenues] = useState([]);
   const [search, setSearch] = useState("");
   const [fromDate, setFromDate] = useState("2026-01-01");
-const [toDate, setToDate] = useState(
-  new Date().toISOString().slice(0, 10)
-);
+  const [toDate, setToDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("revenues")) || [];
-    setRevenues(data);
+    const data = JSON.parse(localStorage.getItem("cashTransactions")) || [];
+
+/* 👇 فلترة الإيرادات */
+const onlyRevenues = data.filter(
+  t =>
+    t.operationType === "deposit" ||
+    t.operationType === "customerPayment"
+);
+
+setRevenues(onlyRevenues);
   }, []);
 
   const filtered = revenues.filter((r) => {
@@ -45,8 +53,6 @@ const [toDate, setToDate] = useState(
 
       <h3 className="mb-3">💰 كشف الإيرادات</h3>
 
-      {/* ===== Filters ===== */}
-
       <div className="row g-2 mb-3">
 
         <div className="col-md-4">
@@ -78,28 +84,25 @@ const [toDate, setToDate] = useState(
 
       </div>
 
-      {/* ===== Table ===== */}
-
       <table className="table table-bordered">
 
         <thead className="table-dark">
-
           <tr>
             <th>#</th>
-<th>رقم المعاملة</th>
-<th>التاريخ</th>
-<th>الوصف</th>
-<th>القيمة</th>
-<th>حذف</th>
+            <th>رقم المعاملة</th>
+            <th>التاريخ</th>
+            <th>الوصف</th>
+            <th>القيمة</th>
+            <th>تعديل</th>
+            <th>حذف</th>
           </tr>
-
         </thead>
 
         <tbody>
 
           {filtered.length === 0 && (
             <tr>
-              <td colSpan="5" className="text-center">
+              <td colSpan="7" className="text-center">
                 لا يوجد إيرادات
               </td>
             </tr>
@@ -108,11 +111,9 @@ const [toDate, setToDate] = useState(
           {filtered.map((r, i) => (
 
             <tr key={r.id}>
-
               <td>{i + 1}</td>
-
+              <td>{r.id}</td>
               <td>{r.date}</td>
-
               <td>{r.description}</td>
 
               <td className="text-success fw-bold">
@@ -120,14 +121,23 @@ const [toDate, setToDate] = useState(
               </td>
 
               <td>
+                <button
+                  className="btn btn-sm btn-warning"
+                  onClick={() =>
+                    window.location.href = `/add-cash-transaction?id=${r.id}`
+                  }
+                >
+                  ✏️
+                </button>
+              </td>
 
+              <td>
                 <button
                   className="btn btn-sm btn-danger"
                   onClick={() => deleteRevenue(r.id)}
                 >
                   🗑
                 </button>
-
               </td>
 
             </tr>

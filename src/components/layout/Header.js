@@ -2,7 +2,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import LanguageSwitcher from "../LanguageSwitcher"; // ✅ جديد
 
-function Header({ onToggleSidebar }) {
+function Header({ onToggleSidebar, darkMode, setDarkMode }) {
   const { user, logout } = useAuth();
   const appLogo = localStorage.getItem("appLogo");
 
@@ -18,9 +18,11 @@ function Header({ onToggleSidebar }) {
     zIndex: 10000,       // فوق كل حاجة
 
     height: 50,
-    background: "linear-gradient(90deg,#0f172a,#1e293b)",
+    background: darkMode
+  ? "linear-gradient(90deg,#0f172a,#1e293b)"
+  : "linear-gradient(90deg,#3b82f6,#1d4ed8)",
     boxShadow: "0 2px 10px rgba(0,0,0,0.3)",
-    color: "#fff",
+    color: darkMode ? "#fff" : "#f9fafb",
 
     display: "flex",
     alignItems: "center",
@@ -94,6 +96,19 @@ border: "none",
         <span>
           👤 {user.username} {user.isAdmin && "(Admin)"}
         </span>
+        <button
+  onClick={() => setDarkMode(prev => !prev)}
+  style={{
+    background: "rgba(255,255,255,0.1)",
+    border: "none",
+    borderRadius: 6,
+    color: "#fff",
+    padding: "5px 10px",
+    cursor: "pointer"
+  }}
+>
+  {darkMode ? "☀️ Light" : "🌙 Dark"}
+</button>
 
         <button
           onClick={logout}
